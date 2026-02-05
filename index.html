@@ -377,6 +377,33 @@
             color: white;
         }
         
+        /* Auto-load status */
+        .auto-load-status {
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .auto-load-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .auto-load-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .auto-load-status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
         /* Notification */
         .notification {
             position: fixed;
@@ -484,6 +511,30 @@
         .pulse-marker {
             animation: pulse 2s infinite;
         }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #0c5460;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 6px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Hidden file input for auto-pick */
+        #autoFileInput {
+            position: absolute;
+            top: -1000px;
+            left: -1000px;
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -552,18 +603,23 @@
                     </button>
                 </div>
                 
-                <!-- GeoJSON Yuklash -->
+                <!-- GeoJSON Status -->
                 <div class="card">
-                    <div class="card-title"><i class="fas fa-upload"></i> GeoJSON yuklash</div>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="geojsonFile" accept=".geojson,.json">
-                        <label for="geojsonFile" class="file-input-label">
-                            <i class="fas fa-folder-open"></i> Fayl tanlash
-                        </label>
+                    <div class="card-title"><i class="fas fa-upload"></i> XonqaMFY Chegarasi</div>
+                    <div id="geojsonStatus" class="auto-load-status loading">
+                        <span class="loading-spinner"></span>Yuklanmoqda...
                     </div>
-                    <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 6px;">
-                        XonqaMFY.geojson faylini tanlang
-                    </small>
+                    <div class="btn-group" style="margin-top: 8px;">
+                        <button class="btn" id="reloadGeoJsonBtn" style="background: var(--primary); color: white; font-size: 0.7rem;">
+                            <i class="fas fa-sync"></i> Qayta yuklash
+                        </button>
+                        <button class="btn" id="manualLoadBtn" style="background: #6c757d; color: white; font-size: 0.7rem;">
+                            <i class="fas fa-folder-open"></i> Boshqa fayl
+                        </button>
+                    </div>
+                    <!-- Hidden file inputs -->
+                    <input type="file" id="geojsonFile" accept=".geojson,.json" style="display: none;">
+                    <input type="file" id="autoFileInput" accept=".geojson,.json" webkitdirectory directory>
                 </div>
                 
                 <!-- Hisoblash natijalari -->
@@ -616,6 +672,11 @@
         let lastClickedLatLng = null;
         let coordinateMarker = null;
         let boundaryLayer = null;
+        let isGeoJsonLoaded = false;
+        
+        // Default GeoJSON URL (bir xil papkada)
+        const DEFAULT_GEOJSON_URL = 'XonqaMFY.geojson';
+        const ALT_NAMES = ['xonqamfy.geojson', 'Xonqa_MFY.geojson', 'boundary.geojson', 'chegara.geojson', 'xonqa.geojson'];
         
         // Initialize map
         function initMap() {
@@ -658,8 +719,113 @@
                 }
             });
             
+            // Auto-load GeoJSON (bir necha usul bilan)
+            setTimeout(() => {
+                autoLoadGeoJson();
+            }, 500);
+            
             // Load saved items
             loadSavedItems();
+        }
+        
+        // Auto-load GeoJSON - bir necha usul bilan urinib ko'radi
+        async function autoLoadGeoJson() {
+            const statusEl = document.getElementById('geojsonStatus');
+            statusEl.className = 'auto-load-status loading';
+            statusEl.innerHTML = '<span class="loading-spinner"></span>Qidirilmoqda...';
+            
+            // Usul 1: Fetch API (agar server orqali ochilsa)
+            try {
+                const response = await fetch(DEFAULT_GEOJSON_URL);
+                if (response.ok) {
+                    const geojson = await response.json();
+                    displayGeoJson(geojson);
+                    statusEl.className = 'auto-load-status success';
+                    statusEl.innerHTML = '<i class="fas fa-check-circle"></i> XonqaMFY.geojson yuklandi!';
+                    showNotification('Chegara avtomatik yuklandi!', 'success');
+                    return;
+                }
+            } catch (e) {
+                console.log('Fetch usuli ishlamadi:', e);
+            }
+            
+            // Usul 2: Alternativ nomlar bilan fetch
+            for (const name of ALT_NAMES) {
+                try {
+                    const response = await fetch(name);
+                    if (response.ok) {
+                        const geojson = await response.json();
+                        displayGeoJson(geojson);
+                        statusEl.className = 'auto-load-status success';
+                        statusEl.innerHTML = `<i class="fas fa-check-circle"></i> ${name} yuklandi!`;
+                        showNotification('Chegara yuklandi!', 'success');
+                        return;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+            
+            // Usul 3: File System Access API (Chrome/Edge)
+            if ('showOpenFilePicker' in window) {
+                try {
+                    // Avtomatik ravishda faylni tanlashga harakat qilish
+                    const autoInput = document.getElementById('autoFileInput');
+                    if (autoInput) {
+                        // Fayl tanlash dialogini ko'rsatmasdan oldin tekshirish
+                        // Bu to'liq avtomatik emas, lekin foydalanuvchi bitta click bilan tanlaydi
+                    }
+                } catch (e) {
+                    console.log('File System Access API ishlamadi:', e);
+                }
+            }
+            
+            // Usul 4: Avtomatik fayl tanlash (mimic user click)
+            // Buni faqat foydalanuvchi interaction orqali qilish mumkin
+            // Shuning uchun statusni yangilaymiz va foydalanuvchiga ko'rsatamiz
+            
+            statusEl.className = 'auto-load-status error';
+            statusEl.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i> 
+                Avtomatik topilmadi. 
+                <br><small>Iltimos, "Boshqa fayl" tugmasini bosing</small>
+            `;
+            
+            // Avtomatik ravishda fayl tanlash oynasini ochish (agar brauzer ruxsat bersa)
+            // setTimeout(() => {
+            //     document.getElementById('manualLoadBtn').click();
+            // }, 1000);
+        }
+        
+        // Display GeoJSON on map
+        function displayGeoJson(geojson) {
+            if (boundaryLayer) {
+                map.removeLayer(boundaryLayer);
+            }
+            
+            boundaryLayer = L.geoJSON(geojson, {
+                style: {
+                    color: '#e74c3c',
+                    weight: 3,
+                    fillOpacity: 0.1,
+                    fillColor: '#e74c3c'
+                },
+                onEachFeature: function(feature, layer) {
+                    if (feature.properties) {
+                        let popupContent = '<b>Xonqa MFY</b><br>';
+                        for (const key in feature.properties) {
+                            popupContent += `${key}: ${feature.properties[key]}<br>`;
+                        }
+                        layer.bindPopup(popupContent);
+                    }
+                }
+            }).addTo(map);
+            
+            // Fit bounds with padding
+            const bounds = boundaryLayer.getBounds();
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+            
+            isGeoJsonLoaded = true;
         }
         
         // Calculate area or length
@@ -668,17 +834,16 @@
             let html = '';
             
             if (layer instanceof L.Polygon) {
-                // Calculate area using Turf.js approximation or simple method
+                // Calculate area using shoelace formula
                 const latlngs = layer.getLatLngs()[0];
                 let area = 0;
                 
-                // Simple shoelace formula for area calculation
                 for (let i = 0; i < latlngs.length; i++) {
                     const j = (i + 1) % latlngs.length;
                     area += latlngs[i].lng * latlngs[j].lat;
                     area -= latlngs[j].lng * latlngs[i].lat;
                 }
-                area = Math.abs(area) * 0.5 * 111.32 * 111.32 * 1000; // Rough conversion to m²
+                area = Math.abs(area) * 0.5 * 111.32 * 111.32 * 1000;
                 
                 const areaKm2 = (area / 1000000).toFixed(3);
                 const areaHa = (area / 10000).toFixed(2);
@@ -687,8 +852,7 @@
                 let perimeter = 0;
                 for (let i = 0; i < latlngs.length; i++) {
                     const j = (i + 1) % latlngs.length;
-                    const d = map.distance(latlngs[i], latlngs[j]);
-                    perimeter += d;
+                    perimeter += map.distance(latlngs[i], latlngs[j]);
                 }
                 
                 html = `
@@ -867,8 +1031,8 @@
             if (boundaryLayer) map.addLayer(boundaryLayer);
         }
         
-        // Handle GeoJSON file upload
-        function handleFileUpload(e) {
+        // Handle manual file upload
+        function handleManualFile(e) {
             const file = e.target.files[0];
             if (!file) return;
             
@@ -876,26 +1040,47 @@
             reader.onload = function(event) {
                 try {
                     const geojson = JSON.parse(event.target.result);
+                    displayGeoJson(geojson);
                     
-                    if (boundaryLayer) map.removeLayer(boundaryLayer);
+                    const statusEl = document.getElementById('geojsonStatus');
+                    statusEl.className = 'auto-load-status success';
+                    statusEl.innerHTML = `<i class="fas fa-check-circle"></i> ${file.name} yuklandi!`;
                     
-                    boundaryLayer = L.geoJSON(geojson, {
-                        style: {
-                            color: '#e74c3c',
-                            weight: 3,
-                            fillOpacity: 0.1,
-                            fillColor: '#e74c3c'
-                        }
-                    }).addTo(map);
-                    
-                    map.fitBounds(boundaryLayer.getBounds());
-                    showNotification('GeoJSON yuklandi!', 'success');
+                    showNotification('Fayl yuklandi!', 'success');
                 } catch (err) {
                     showNotification('Xatolik! Noto\'g\'ri format', 'error');
-                    console.error(err);
                 }
             };
             reader.readAsText(file);
+        }
+        
+        // Handle auto file input (directory picker)
+        function handleAutoFile(e) {
+            const files = e.target.files;
+            if (!files.length) return;
+            
+            // Find XonqaMFY.geojson in the selected files
+            for (let file of files) {
+                if (file.name.toLowerCase().includes('xonqa') && file.name.endsWith('.geojson')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            const geojson = JSON.parse(event.target.result);
+                            displayGeoJson(geojson);
+                            
+                            const statusEl = document.getElementById('geojsonStatus');
+                            statusEl.className = 'auto-load-status success';
+                            statusEl.innerHTML = `<i class="fas fa-check-circle"></i> ${file.name} avtomatik yuklandi!`;
+                            
+                            showNotification('Chegara avtomatik yuklandi!', 'success');
+                        } catch (err) {
+                            console.error('GeoJSON parse error:', err);
+                        }
+                    };
+                    reader.readAsText(file);
+                    return;
+                }
+            }
         }
         
         // Toggle coordinate mode
@@ -957,8 +1142,15 @@
             document.getElementById('copyCoordinatesBtn').addEventListener('click', copyCoordinates);
             document.getElementById('saveFeatureBtn').addEventListener('click', saveFeature);
             document.getElementById('clearAllBtn').addEventListener('click', clearAll);
-            document.getElementById('geojsonFile').addEventListener('change', handleFileUpload);
             document.getElementById('mapTypeSelect').addEventListener('change', (e) => changeMapType(e.target.value));
+            
+            // GeoJSON controls
+            document.getElementById('reloadGeoJsonBtn').addEventListener('click', autoLoadGeoJson);
+            document.getElementById('manualLoadBtn').addEventListener('click', () => {
+                document.getElementById('geojsonFile').click();
+            });
+            document.getElementById('geojsonFile').addEventListener('change', handleManualFile);
+            document.getElementById('autoFileInput').addEventListener('change', handleAutoFile);
             
             // Sidebar controls
             document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
@@ -970,6 +1162,13 @@
                     toggleSidebar();
                 }
             });
+            
+            // Try to auto-pick file if possible (with user interaction)
+            // Buni faqat bir marta urinib ko'ramiz
+            if ('showOpenFilePicker' in window) {
+                // File System Access API mavjud, lekin foydalanuvchi interaction kerak
+                // Shuning uchun statusni ko'rsatamiz
+            }
         });
     </script>
 </body>
