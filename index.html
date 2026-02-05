@@ -20,6 +20,7 @@
             --secondary: #27ae60;
             --danger: #e74c3c;
             --warning: #f39c12;
+            --info: #17a2b8;
             --bg: #f8f9fa;
             --card-bg: #ffffff;
             --text: #2c3e50;
@@ -34,7 +35,6 @@
             overflow: hidden;
         }
         
-        /* Header */
         header {
             background: linear-gradient(135deg, #2c3e50, var(--primary));
             color: white;
@@ -97,7 +97,6 @@
             font-size: 1rem;
         }
         
-        /* Main Container */
         .main-container {
             flex: 1;
             display: flex;
@@ -111,7 +110,6 @@
             min-height: 0;
         }
         
-        /* Sidebar */
         .sidebar {
             position: absolute;
             right: 10px;
@@ -156,7 +154,6 @@
             gap: 10px;
         }
         
-        /* Cards */
         .card {
             background: var(--bg);
             border-radius: 8px;
@@ -179,7 +176,6 @@
             font-size: 0.9rem;
         }
         
-        /* Form Elements */
         .form-group {
             margin-bottom: 8px;
         }
@@ -206,7 +202,6 @@
             min-height: 50px;
         }
         
-        /* Buttons Group */
         .btn-group {
             display: flex;
             flex-wrap: wrap;
@@ -234,7 +229,9 @@
         .btn-warning { background: var(--warning) !important; color: white !important; }
         .btn-warning:hover { background: #d68910 !important; }
         
-        /* Results Box */
+        .btn-info { background: var(--info) !important; color: white !important; }
+        .btn-info:hover { background: #138496 !important; }
+        
         .result-box {
             background: #e8f6f3;
             border-left: 3px solid var(--secondary);
@@ -271,9 +268,8 @@
             font-weight: 600;
         }
         
-        /* Feature List */
         .feature-list {
-            max-height: 120px;
+            max-height: 150px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -301,6 +297,11 @@
         .feature-item.selected {
             border-color: var(--primary);
             background: #e8f4fc;
+        }
+        
+        .feature-item.boundary {
+            border-left: 4px solid var(--info);
+            background: #e7f3ff;
         }
         
         .feature-info {
@@ -338,7 +339,6 @@
         .btn-edit { background: var(--primary); color: white; }
         .btn-delete { background: var(--danger); color: white; }
         
-        /* Coordinates Display */
         .coords-box {
             background: #fff3cd;
             border: 1px solid #ffeaa7;
@@ -359,7 +359,6 @@
             color: #856404;
         }
         
-        /* Map Type Selector */
         .map-type-select {
             width: 100%;
             padding: 8px;
@@ -368,7 +367,6 @@
             font-size: 0.85rem;
         }
         
-        /* Floating Toggle Button */
         .sidebar-toggle {
             position: absolute;
             right: 10px;
@@ -395,7 +393,32 @@
             color: white;
         }
         
-        /* Notification */
+        .status-box {
+            font-size: 0.75rem;
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .status-box.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .status-box.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-box.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
         .notification {
             position: fixed;
             bottom: 20px;
@@ -420,7 +443,6 @@
             opacity: 1;
         }
         
-        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -483,7 +505,6 @@
             justify-content: flex-end;
         }
         
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -497,7 +518,6 @@
             border-radius: 3px;
         }
         
-        /* Mobile */
         @media (max-width: 768px) {
             header {
                 padding: 6px 10px;
@@ -535,7 +555,6 @@
             }
         }
         
-        /* Popup Custom */
         .custom-popup {
             font-size: 0.9rem;
             min-width: 200px;
@@ -607,6 +626,11 @@
             </div>
             
             <div class="sidebar-content">
+                <!-- Status -->
+                <div id="statusBox" class="status-box loading">
+                    <i class="fas fa-spinner fa-spin"></i> XonqaMFY.geojson yuklanmoqda...
+                </div>
+                
                 <!-- Xarita turi -->
                 <div class="card">
                     <div class="card-title"><i class="fas fa-layer-group"></i> Xarita turi</div>
@@ -635,24 +659,24 @@
                     </button>
                 </div>
                 
-                <!-- Chizilgan obyektlar ro'yxati -->
+                <!-- Barcha obyektlar -->
                 <div class="card">
-                    <div class="card-title"><i class="fas fa-list"></i> Chizilgan obyektlar</div>
+                    <div class="card-title"><i class="fas fa-list"></i> Barcha obyektlar</div>
                     <div id="featureList" class="feature-list">
-                        <p style="color: #999; font-size: 0.8rem; text-align: center;">Hozircha bo'sh</p>
+                        <p style="color: #999; font-size: 0.8rem; text-align: center;">Yuklanmoqda...</p>
                     </div>
                     <div class="btn-group" style="margin-top: 8px;">
                         <button class="btn btn-success" id="exportGeoJsonBtn">
-                            <i class="fas fa-download"></i> GeoJSON Yuklash
+                            <i class="fas fa-download"></i> Saqlash
                         </button>
                         <button class="btn btn-warning" id="importGeoJsonBtn">
-                            <i class="fas fa-upload"></i> GeoJSON Ochish
+                            <i class="fas fa-upload"></i> Ochish
                         </button>
                     </div>
                     <input type="file" id="importFile" accept=".geojson,.json" style="display: none;">
                 </div>
                 
-                <!-- Tanlangan obyekt ma'lumotlari -->
+                <!-- Tanlangan obyekt -->
                 <div class="card" id="selectedFeatureCard" style="display: none;">
                     <div class="card-title"><i class="fas fa-info-circle"></i> Obyekt ma'lumotlari</div>
                     <div id="featureDetails"></div>
@@ -669,7 +693,7 @@
         </div>
     </div>
 
-    <!-- Modal for editing feature -->
+    <!-- Modal -->
     <div class="modal-overlay" id="editModal">
         <div class="modal">
             <div class="modal-header">
@@ -678,7 +702,7 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">Nomi (masalan: Hovli, Dala)</label>
+                    <label class="form-label">Nomi</label>
                     <input type="text" id="featureName" placeholder="Obyekt nomini kiriting...">
                 </div>
                 <div class="form-group">
@@ -706,7 +730,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn" onclick="closeModal()" style="background: #6c757d; color: white;">Bekor qilish</button>
+                <button class="btn" onclick="closeModal()" style="background: #6c757d; color: white;">Bekor</button>
                 <button class="btn btn-success" onclick="saveFeatureData()">Saqlash</button>
             </div>
         </div>
@@ -722,15 +746,24 @@
     
     <script>
         // Global variables
-        let map;
-        let drawnItems = new L.FeatureGroup();
-        let selectedLayer = null;
-        let selectedLayerId = null;
-        let coordinateMode = false;
-        let lastClickedLatLng = null;
-        let coordinateMarker = null;
-        let layerCounter = 0;
-        let layersData = new Map();
+        var map;
+        var drawnItems = new L.FeatureGroup();
+        var boundaryLayer = null;
+        var selectedLayer = null;
+        var selectedLayerId = null;
+        var coordinateMode = false;
+        var lastClickedLatLng = null;
+        var coordinateMarker = null;
+        var layerCounter = 0;
+        var layersData = new Map();
+        var isBoundaryLoaded = false;
+        
+        // Initialize
+        function init() {
+            initMap();
+            loadXonqaBoundary();
+            setupEventListeners();
+        }
         
         // Initialize map
         function initMap() {
@@ -740,7 +773,6 @@
                 zoomControl: true
             });
             
-            // Add default OSM layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'OpenStreetMap',
                 maxZoom: 19
@@ -749,49 +781,11 @@
             map.addLayer(drawnItems);
             
             // Drawing event
-            map.on(L.Draw.Event.CREATED, function (e) {
-                const layer = e.layer;
-                layerCounter++;
-                const layerId = 'feature_' + layerCounter;
-                layer.layerId = layerId;
-                
-                // Calculate measurements
-                const measurements = calculateMeasurements(layer);
-                
-                // Default properties
-                const properties = {
-                    id: layerId,
-                    name: e.layerType === 'polygon' ? 'Maydon ' + layerCounter : 'Chiziq ' + layerCounter,
-                    type: e.layerType === 'polygon' ? 'dala' : 'yulka',
-                    owner: '',
-                    cadastre: '',
-                    description: '',
-                    created: new Date().toLocaleString('uz-UZ')
-                };
-                
-                // Add measurements
-                Object.assign(properties, measurements);
-                
-                layersData.set(layerId, { layer: layer, properties: properties });
-                
-                // Add popup
-                updateLayerPopup(layer, properties);
-                
-                // Add click event
-                layer.on('click', function(evt) {
-                    L.DomEvent.stopPropagation(evt);
-                    selectFeature(layerId);
-                });
-                
-                drawnItems.addLayer(layer);
-                updateFeatureList();
-                selectFeature(layerId);
-                
-                showNotification('Obyekt qo\'shildi! Ma\'lumotlarni kiriting.', 'success');
-                openEditModal(layerId);
+            map.on(L.Draw.Event.CREATED, function(e) {
+                handleDrawCreated(e);
             });
             
-            // Map click for coordinates
+            // Map click
             map.on('click', function(e) {
                 if (coordinateMode) {
                     updateCoordinates(e.latlng);
@@ -801,7 +795,7 @@
                 }
             });
             
-            // Mouse move for live coordinates
+            // Mouse move
             map.on('mousemove', function(e) {
                 if (!coordinateMode) {
                     document.getElementById('latValue').textContent = e.latlng.lat.toFixed(6);
@@ -810,17 +804,143 @@
             });
         }
         
+        // Load XonqaMFY.geojson
+        function loadXonqaBoundary() {
+            updateStatus('loading', 'XonqaMFY.geojson yuklanmoqda...');
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'XonqaMFY.geojson', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200 || xhr.status === 0) {
+                        try {
+                            var geojson = JSON.parse(xhr.responseText);
+                            processBoundaryGeoJson(geojson);
+                            updateStatus('success', 'XonqaMFY.geojson yuklandi!');
+                        } catch (err) {
+                            console.error('Parse error:', err);
+                            updateStatus('error', 'GeoJSON xato! Faylni tekshiring');
+                            updateFeatureList();
+                        }
+                    } else {
+                        console.error('Load error:', xhr.status);
+                        updateStatus('error', 'Fayl topilmadi! Qo\'lda yuklang');
+                        updateFeatureList();
+                    }
+                }
+            };
+            xhr.onerror = function() {
+                updateStatus('error', 'Yuklash xatosi! Qo\'lda yuklang');
+                updateFeatureList();
+            };
+            xhr.send();
+        }
+        
+        // Process boundary GeoJSON
+        function processBoundaryGeoJson(geojson) {
+            if (boundaryLayer) {
+                map.removeLayer(boundaryLayer);
+            }
+            
+            boundaryLayer = L.geoJSON(geojson, {
+                style: {
+                    color: '#17a2b8',
+                    weight: 4,
+                    fillOpacity: 0.05,
+                    fillColor: '#17a2b8',
+                    dashArray: '5, 5'
+                },
+                onEachFeature: function(feature, layer) {
+                    var name = feature.properties && feature.properties.name ? feature.properties.name : 'Xonqa MFY';
+                    layer.bindPopup('<b>' + name + '</b><br>MFY Chegarasi');
+                }
+            }).addTo(map);
+            
+            // Add to layersData
+            var boundaryId = 'xonqa_boundary';
+            layersData.set(boundaryId, {
+                layer: boundaryLayer,
+                properties: {
+                    id: boundaryId,
+                    name: 'Xonqa MFY Chegarasi',
+                    type: 'boshqa',
+                    owner: '',
+                    cadastre: '',
+                    description: 'Mahalla fuqarolar yig\'ini chegarasi',
+                    isBoundary: true,
+                    created: new Date().toLocaleString('uz-UZ')
+                },
+                isBoundary: true
+            });
+            
+            // Fit bounds
+            if (boundaryLayer.getBounds) {
+                map.fitBounds(boundaryLayer.getBounds(), { padding: [50, 50], maxZoom: 15 });
+            }
+            
+            isBoundaryLoaded = true;
+            updateFeatureList();
+            
+            // Make boundary clickable
+            boundaryLayer.on('click', function(e) {
+                L.DomEvent.stopPropagation(e);
+                selectFeature(boundaryId);
+            });
+        }
+        
+        // Handle draw created
+        function handleDrawCreated(e) {
+            var layer = e.layer;
+            layerCounter++;
+            var layerId = 'feature_' + layerCounter;
+            layer.layerId = layerId;
+            
+            var measurements = calculateMeasurements(layer);
+            
+            var properties = {
+                id: layerId,
+                name: e.layerType === 'polygon' ? 'Maydon ' + layerCounter : 'Chiziq ' + layerCounter,
+                type: e.layerType === 'polygon' ? 'dala' : 'yulka',
+                owner: '',
+                cadastre: '',
+                description: '',
+                created: new Date().toLocaleString('uz-UZ'),
+                isBoundary: false
+            };
+            
+            Object.assign(properties, measurements);
+            
+            layersData.set(layerId, {
+                layer: layer,
+                properties: properties,
+                isBoundary: false
+            });
+            
+            updateLayerPopup(layer, properties);
+            
+            layer.on('click', function(evt) {
+                L.DomEvent.stopPropagation(evt);
+                selectFeature(layerId);
+            });
+            
+            drawnItems.addLayer(layer);
+            updateFeatureList();
+            selectFeature(layerId);
+            
+            showNotification('Obyekt qo\'shildi! Ma\'lumotlarni kiriting.', 'success');
+            openEditModal(layerId);
+        }
+        
         // Calculate measurements
         function calculateMeasurements(layer) {
-            const result = {};
+            var result = {};
             
             if (layer instanceof L.Polygon) {
-                // Calculate area using shoelace formula
-                const latlngs = layer.getLatLngs()[0];
-                let area = 0;
+                var latlngs = layer.getLatLngs()[0];
+                var area = 0;
                 
-                for (let i = 0; i < latlngs.length; i++) {
-                    const j = (i + 1) % latlngs.length;
+                for (var i = 0; i < latlngs.length; i++) {
+                    var j = (i + 1) % latlngs.length;
                     area += latlngs[i].lng * latlngs[j].lat;
                     area -= latlngs[j].lng * latlngs[i].lat;
                 }
@@ -830,19 +950,18 @@
                 result.area_ha = (area / 10000).toFixed(2);
                 result.area_km2 = (area / 1000000).toFixed(4);
                 
-                // Perimeter
-                let perimeter = 0;
-                for (let i = 0; i < latlngs.length; i++) {
-                    const j = (i + 1) % latlngs.length;
-                    perimeter += map.distance(latlngs[i], latlngs[j]);
+                var perimeter = 0;
+                for (var k = 0; k < latlngs.length; k++) {
+                    var l = (k + 1) % latlngs.length;
+                    perimeter += map.distance(latlngs[k], latlngs[l]);
                 }
                 result.perimeter_m = Math.round(perimeter);
                 
             } else if (layer instanceof L.Polyline) {
-                const latlngs = layer.getLatLngs();
-                let length = 0;
-                for (let i = 0; i < latlngs.length - 1; i++) {
-                    length += map.distance(latlngs[i], latlngs[i+1]);
+                var lineLatLngs = layer.getLatLngs();
+                var length = 0;
+                for (var m = 0; m < lineLatLngs.length - 1; m++) {
+                    length += map.distance(lineLatLngs[m], lineLatLngs[m+1]);
                 }
                 result.length_m = Math.round(length);
                 result.length_km = (length / 1000).toFixed(2);
@@ -853,11 +972,11 @@
         
         // Update layer popup
         function updateLayerPopup(layer, props) {
-            let popupContent = '<div class="custom-popup">';
+            var popupContent = '<div class="custom-popup">';
             popupContent += '<div class="popup-title">' + props.name + '</div>';
             
             if (props.type) {
-                const typeNames = {
+                var typeNames = {
                     'uy': 'Uy / Hovli',
                     'dala': 'Dala / Ekin',
                     'bog': "Bog' / O'rmon",
@@ -919,14 +1038,13 @@
         function selectFeature(layerId) {
             deselectAll();
             
-            const data = layersData.get(layerId);
+            var data = layersData.get(layerId);
             if (!data) return;
             
             selectedLayerId = layerId;
             selectedLayer = data.layer;
             
-            // Highlight
-            if (selectedLayer.setStyle) {
+            if (selectedLayer.setStyle && !data.isBoundary) {
                 selectedLayer.setStyle({
                     color: '#e74c3c',
                     weight: 4,
@@ -934,11 +1052,9 @@
                 });
             }
             
-            // Update UI
             updateFeatureList();
-            showFeatureDetails(data.properties);
+            showFeatureDetails(data.properties, data.isBoundary);
             
-            // Fly to feature
             if (selectedLayer.getBounds) {
                 map.fitBounds(selectedLayer.getBounds(), { padding: [50, 50], maxZoom: 18 });
             }
@@ -947,12 +1063,15 @@
         // Deselect all
         function deselectAll() {
             if (selectedLayer && selectedLayer.setStyle) {
-                const isPolygon = selectedLayer instanceof L.Polygon;
-                selectedLayer.setStyle({
-                    color: isPolygon ? '#2980b9' : '#e74c3c',
-                    weight: isPolygon ? 3 : 4,
-                    fillOpacity: 0.2
-                });
+                var data = layersData.get(selectedLayerId);
+                if (data && !data.isBoundary) {
+                    var isPolygon = selectedLayer instanceof L.Polygon;
+                    selectedLayer.setStyle({
+                        color: isPolygon ? '#2980b9' : '#e74c3c',
+                        weight: isPolygon ? 3 : 4,
+                        fillOpacity: 0.2
+                    });
+                }
             }
             selectedLayer = null;
             selectedLayerId = null;
@@ -962,35 +1081,44 @@
         
         // Update feature list
         function updateFeatureList() {
-            const container = document.getElementById('featureList');
+            var container = document.getElementById('featureList');
             
             if (layersData.size === 0) {
-                container.innerHTML = '<p style="color: #999; font-size: 0.8rem; text-align: center;">Hozircha bo\'sh</p>';
+                container.innerHTML = '<p style="color: #999; font-size: 0.8rem; text-align: center;">Hozircha obyekt yo\'q</p>';
                 return;
             }
             
-            let html = '';
+            var html = '';
             layersData.forEach(function(data, id) {
-                const props = data.properties;
-                const isSelected = (id === selectedLayerId);
+                var props = data.properties;
+                var isSelected = (id === selectedLayerId);
+                var isBoundary = data.isBoundary;
                 
-                let sizeInfo = '';
+                var sizeInfo = '';
                 if (props.area_ha) {
                     sizeInfo = props.area_ha + ' ga';
                 } else if (props.length_m) {
                     sizeInfo = props.length_m + ' m';
                 }
                 
-                let ownerInfo = props.owner ? ' | ' + props.owner : '';
+                var ownerInfo = props.owner ? ' | ' + props.owner : '';
+                var boundaryClass = isBoundary ? 'boundary' : '';
+                var icon = isBoundary ? '<i class="fas fa-map-marked" style="color: #17a2b8; margin-right: 5px;"></i>' : '';
                 
-                html += '<div class="feature-item ' + (isSelected ? 'selected' : '') + '" onclick="selectFeature(\'' + id + '\')">';
+                html += '<div class="feature-item ' + boundaryClass + ' ' + (isSelected ? 'selected' : '') + '" onclick="selectFeature(\'' + id + '\')">';
                 html += '<div class="feature-info">';
-                html += '<div class="feature-name">' + props.name + '</div>';
-                html += '<div class="feature-meta">' + sizeInfo + ownerInfo + '</div>';
+                html += '<div class="feature-name">' + icon + props.name + '</div>';
+                if (!isBoundary) {
+                    html += '<div class="feature-meta">' + sizeInfo + ownerInfo + '</div>';
+                } else {
+                    html += '<div class="feature-meta" style="color: #17a2b8;">MFY Chegarasi</div>';
+                }
                 html += '</div>';
                 html += '<div class="feature-actions" onclick="event.stopPropagation()">';
-                html += '<button class="btn-edit" onclick="openEditModal(\'' + id + '\')" title="Tahrirlash"><i class="fas fa-edit"></i></button>';
-                html += '<button class="btn-delete" onclick="deleteFeature(\'' + id + '\')" title="O\'chirish"><i class="fas fa-trash"></i></button>';
+                if (!isBoundary) {
+                    html += '<button class="btn-edit" onclick="openEditModal(\'' + id + '\')" title="Tahrirlash"><i class="fas fa-edit"></i></button>';
+                    html += '<button class="btn-delete" onclick="deleteFeature(\'' + id + '\')" title="O\'chirish"><i class="fas fa-trash"></i></button>';
+                }
                 html += '</div>';
                 html += '</div>';
             });
@@ -999,11 +1127,18 @@
         }
         
         // Show feature details
-        function showFeatureDetails(props) {
-            const card = document.getElementById('selectedFeatureCard');
-            const details = document.getElementById('featureDetails');
+        function showFeatureDetails(props, isBoundary) {
+            var card = document.getElementById('selectedFeatureCard');
+            var details = document.getElementById('featureDetails');
             
-            let html = '<div class="result-box">';
+            var html = '<div class="result-box">';
+            
+            if (isBoundary) {
+                html += '<div class="result-item">';
+                html += '<span class="result-label">Turi:</span>';
+                html += '<span class="result-value">MFY Chegarasi</span>';
+                html += '</div>';
+            }
             
             if (props.area_ha) {
                 html += '<div class="result-item">';
@@ -1037,15 +1172,39 @@
             html += '</div>';
             details.innerHTML = html;
             card.style.display = 'block';
+            
+            // Show/hide buttons based on boundary
+            var editBtn = document.getElementById('editFeatureBtn');
+            var deleteBtn = document.getElementById('deleteFeatureBtn');
+            if (isBoundary) {
+                editBtn.style.display = 'none';
+                deleteBtn.style.display = 'none';
+            } else {
+                editBtn.style.display = 'block';
+                deleteBtn.style.display = 'block';
+            }
         }
         
-        // Open edit modal
+        // Update status box
+        function updateStatus(type, message) {
+            var box = document.getElementById('statusBox');
+            box.className = 'status-box ' + type;
+            
+            var icon = '';
+            if (type === 'loading') icon = '<i class="fas fa-spinner fa-spin"></i> ';
+            else if (type === 'success') icon = '<i class="fas fa-check-circle"></i> ';
+            else if (type === 'error') icon = '<i class="fas fa-exclamation-triangle"></i> ';
+            
+            box.innerHTML = icon + message;
+        }
+        
+        // Modal functions
         function openEditModal(layerId) {
-            const data = layersData.get(layerId);
-            if (!data) return;
+            var data = layersData.get(layerId);
+            if (!data || data.isBoundary) return;
             
             selectedLayerId = layerId;
-            const props = data.properties;
+            var props = data.properties;
             
             document.getElementById('featureName').value = props.name || '';
             document.getElementById('featureType').value = props.type || 'dala';
@@ -1056,17 +1215,15 @@
             document.getElementById('editModal').classList.add('show');
         }
         
-        // Close modal
         function closeModal() {
             document.getElementById('editModal').classList.remove('show');
         }
         
-        // Save feature data
         function saveFeatureData() {
             if (!selectedLayerId) return;
             
-            const data = layersData.get(selectedLayerId);
-            if (!data) return;
+            var data = layersData.get(selectedLayerId);
+            if (!data || data.isBoundary) return;
             
             data.properties.name = document.getElementById('featureName').value || data.properties.name;
             data.properties.type = document.getElementById('featureType').value;
@@ -1078,19 +1235,18 @@
             updateFeatureList();
             
             if (selectedLayerId) {
-                showFeatureDetails(data.properties);
+                showFeatureDetails(data.properties, data.isBoundary);
             }
             
             closeModal();
             showNotification('Ma\'lumotlar saqlandi!', 'success');
         }
         
-        // Delete feature
         function deleteFeature(layerId) {
             if (!confirm('Haqiqatan ham o\'chirmoqchimisiz?')) return;
             
-            const data = layersData.get(layerId);
-            if (data) {
+            var data = layersData.get(layerId);
+            if (data && !data.isBoundary) {
                 drawnItems.removeLayer(data.layer);
                 layersData.delete(layerId);
                 
@@ -1103,78 +1259,97 @@
             }
         }
         
-        // Export GeoJSON
+        // Export all to GeoJSON
         function exportGeoJson() {
             if (layersData.size === 0) {
                 showNotification('Eksport qilish uchun obyekt yo\'q!', 'error');
                 return;
             }
             
-            const features = [];
+            var features = [];
             layersData.forEach(function(data, id) {
-                const geojson = data.layer.toGeoJSON();
+                if (data.isBoundary) return; // Skip boundary in export
+                
+                var geojson = data.layer.toGeoJSON();
                 geojson.properties = {};
                 for (var key in data.properties) {
-                    geojson.properties[key] = data.properties[key];
+                    if (key !== 'isBoundary') {
+                        geojson.properties[key] = data.properties[key];
+                    }
                 }
                 features.push(geojson);
             });
             
-            const featureCollection = {
+            if (features.length === 0) {
+                showNotification('Saqlash uchun obyekt yo\'q!', 'error');
+                return;
+            }
+            
+            var featureCollection = {
                 type: 'FeatureCollection',
                 features: features,
                 created: new Date().toISOString(),
                 count: features.length
             };
             
-            const dataStr = JSON.stringify(featureCollection, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            var dataStr = JSON.stringify(featureCollection, null, 2);
+            var dataBlob = new Blob([dataStr], { type: 'application/json' });
             
-            const link = document.createElement('a');
+            var link = document.createElement('a');
             link.href = URL.createObjectURL(dataBlob);
             link.download = 'xonqa_mfy_' + new Date().toISOString().slice(0, 10) + '.geojson';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             
-            showNotification('GeoJSON yuklandi!', 'success');
+            showNotification(features.length + ' ta obyekt saqlandi!', 'success');
         }
         
         // Import GeoJSON
         function importGeoJson(event) {
-            const file = event.target.files[0];
+            var file = event.target.files[0];
             if (!file) return;
             
-            const reader = new FileReader();
+            var reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const geojson = JSON.parse(e.target.result);
+                    var geojson = JSON.parse(e.target.result);
                     
                     if (geojson.type === 'FeatureCollection' && geojson.features) {
+                        var count = 0;
                         geojson.features.forEach(function(feature) {
-                            const layer = L.geoJSON(feature).getLayers()[0];
+                            if (!feature.geometry) return;
+                            
+                            var layer = L.geoJSON(feature).getLayers()[0];
+                            if (!layer) return;
+                            
                             layerCounter++;
-                            const layerId = 'imported_' + layerCounter;
+                            var layerId = 'imported_' + layerCounter;
                             layer.layerId = layerId;
                             
-                            const measurements = calculateMeasurements(layer);
-                            const properties = {
+                            var measurements = calculateMeasurements(layer);
+                            var properties = {
                                 id: layerId,
                                 name: (feature.properties && feature.properties.name) ? feature.properties.name : 'Obyekt ' + layerCounter,
                                 type: (feature.properties && feature.properties.type) ? feature.properties.type : 'boshqa',
                                 owner: (feature.properties && feature.properties.owner) ? feature.properties.owner : '',
                                 cadastre: (feature.properties && feature.properties.cadastre) ? feature.properties.cadastre : '',
                                 description: (feature.properties && feature.properties.description) ? feature.properties.description : '',
-                                created: new Date().toLocaleString('uz-UZ')
+                                created: new Date().toLocaleString('uz-UZ'),
+                                isBoundary: false
                             };
                             
                             for (var key in measurements) {
                                 properties[key] = measurements[key];
                             }
                             
-                            layersData.set(layerId, { layer: layer, properties: properties });
+                            layersData.set(layerId, {
+                                layer: layer,
+                                properties: properties,
+                                isBoundary: false
+                            });
                             
-                            const isPolygon = layer instanceof L.Polygon;
+                            var isPolygon = layer instanceof L.Polygon;
                             layer.setStyle({
                                 color: isPolygon ? '#2980b9' : '#e74c3c',
                                 weight: isPolygon ? 3 : 4,
@@ -1189,27 +1364,27 @@
                             });
                             
                             drawnItems.addLayer(layer);
+                            count++;
                         });
                         
                         updateFeatureList();
-                        showNotification(geojson.features.length + ' ta obyekt yuklandi!', 'success');
+                        showNotification(count + ' ta obyekt yuklandi!', 'success');
                     }
                 } catch (err) {
-                    showNotification('Xatolik! Noto\'g\'ri GeoJSON format', 'error');
+                    showNotification('Xatolik! Noto\'g\'ri GeoJSON', 'error');
                     console.error(err);
                 }
             };
             reader.readAsText(file);
         }
         
-        // Update coordinates display
+        // Other functions
         function updateCoordinates(latlng) {
             lastClickedLatLng = latlng;
             document.getElementById('latValue').textContent = latlng.lat.toFixed(6);
             document.getElementById('lngValue').textContent = latlng.lng.toFixed(6);
         }
         
-        // Add coordinate marker
         function addCoordinateMarker(latlng) {
             if (coordinateMarker) {
                 map.removeLayer(coordinateMarker);
@@ -1219,26 +1394,24 @@
             coordinateMarker.bindPopup('<b>Koordinata:</b><br>' + latlng.lat.toFixed(6) + ', ' + latlng.lng.toFixed(6)).openPopup();
         }
         
-        // Copy coordinates
         function copyCoordinates() {
             if (!lastClickedLatLng) {
                 showNotification('Avval koordinata tanlang!', 'error');
                 return;
             }
             
-            const text = lastClickedLatLng.lat.toFixed(6) + ', ' + lastClickedLatLng.lng.toFixed(6);
+            var text = lastClickedLatLng.lat.toFixed(6) + ', ' + lastClickedLatLng.lng.toFixed(6);
             navigator.clipboard.writeText(text).then(function() {
                 showNotification('Koordinata nusxalandi!', 'success');
             });
         }
         
-        // Change map type
         function changeMapType(type) {
             map.eachLayer(function(layer) {
                 if (layer._url) map.removeLayer(layer);
             });
             
-            let url;
+            var url;
             if (type === 'google') {
                 url = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
             } else if (type === 'satellite') {
@@ -1253,12 +1426,12 @@
             }).addTo(map);
             
             map.addLayer(drawnItems);
+            if (boundaryLayer) map.addLayer(boundaryLayer);
         }
         
-        // Toggle coordinate mode
         function toggleCoordinateMode() {
             coordinateMode = !coordinateMode;
-            const btn = document.getElementById('getCoordinateBtn');
+            var btn = document.getElementById('getCoordinateBtn');
             
             if (coordinateMode) {
                 btn.classList.add('active');
@@ -1273,11 +1446,10 @@
             }
         }
         
-        // Show notification
         function showNotification(text, type) {
-            const notif = document.getElementById('notification');
-            let icon = 'check-circle';
-            let color = '#27ae60';
+            var notif = document.getElementById('notification');
+            var icon = 'check-circle';
+            var color = '#27ae60';
             
             if (type === 'error') {
                 icon = 'exclamation-circle';
@@ -1299,16 +1471,12 @@
             }, 3000);
         }
         
-        // Sidebar toggle
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('hidden');
         }
         
-        // DOM Ready
-        document.addEventListener('DOMContentLoaded', function() {
-            initMap();
-            
-            // Drawing buttons
+        // Setup event listeners
+        function setupEventListeners() {
             document.getElementById('drawPolygonBtn').addEventListener('click', function() {
                 new L.Draw.Polygon(map, {
                     allowIntersection: false,
@@ -1341,11 +1509,13 @@
                 changeMapType(e.target.value);
             });
             
-            // Close modal on outside click
             document.getElementById('editModal').addEventListener('click', function(e) {
                 if (e.target.id === 'editModal') closeModal();
             });
-        });
+        }
+        
+        // Start
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
