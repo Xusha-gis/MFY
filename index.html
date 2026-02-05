@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Xarita Maydon - Kompakt</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        :root {
+            --primary: #2980b9;
+            --secondary: #27ae60;
+            --danger: #e74c3c;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --border: #e0e0e0;
+        }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+            overflow: hidden;
+        }
+        
+        /* Header - Kompakt */
+        header {
+            background: linear-gradient(135deg, #2c3e50, var(--primary));
+            color: white;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .logo i {
+            font-size: 20px;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 6px;
+        }
+        
+        /* Tugmalar - Kichik */
+        .btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+        
+        .btn.active {
+            background: var(--secondary);
+        }
+        
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Map */
+        #map {
+            flex: 1;
+            z-index: 1;
+            min-height: 0;
+        }
+        
+        /* Sidebar - Floating Panel */
+        .sidebar {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            bottom: 10px;
+            width: 320px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(calc(100% + 20px));
+        }
+        
+        .sidebar-header {
+            padding: 12px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sidebar-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .card-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .card-title i {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 8px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: white;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        /* Buttons Group */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+            min-width: calc(50% - 3px);
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+        }
+        
+        .btn-group .btn:hover {
+            background: #1a5276;
+        }
+        
+        .btn-success { background: var(--secondary) !important; }
+        .btn-success:hover { background: #1e8449 !important; }
+        
+        .btn-danger { background: var(--danger) !important; }
+        .btn-danger:hover { background: #c0392b !important; }
+        
+        /* Results Box */
+        .result-box {
+            background: #e8f6f3;
+            border-left: 3px solid var(--secondary);
+            padding: 10px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.85rem;
+        }
+        
+        .result-box h4 {
+            font-size: 0.8rem;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        
+        .result-box p {
+            margin: 2px 0;
+            color: #555;
+        }
+        
+        /* Coordinates Display */
+        .coords-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .coords-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 3px 0;
+        }
+        
+        .coords-label {
+            font-weight: 600;
+            color: #856404;
+        }
+        
+        /* File Input */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 8px 12px;
+            background: var(--primary);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .file-input-label:hover {
+            background: #1a5276;
+        }
+        
+        /* Saved Items */
+        .saved-list {
+            max-height: 150px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .saved-item {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.8rem;
+            position: relative;
+        }
+        
+        .saved-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .saved-item-type {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+        
+        .saved-item-delete {
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        /* Map Type Selector */
+        .map-type-select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+        
+        /* Floating Toggle Button */
+        .sidebar-toggle {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            z-index: 1001;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+        
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #bdc3c7;
+            border-radius: 3px;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            header {
+                padding: 6px 10px;
+            }
+            
+            .logo span {
+                display: none;
+            }
+            
+            .header-controls .btn-text {
+                display: none;
+            }
+            
+            .sidebar {
+                width: calc(100% - 20px);
+                max-width: 360px;
+                right: 10px;
+                left: 10px;
+                top: auto;
+                bottom: 10px;
+                max-height: 60vh;
+            }
+            
+            .sidebar.hidden {
+                transform: translateY(calc(100% + 20px));
+            }
+            
+            .sidebar-toggle {
+                top: auto;
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .leaflet-control-zoom {
+                margin-top: 60px !important;
+            }
+        }
+        
+        /* Small height screens */
+        @media (max-height: 600px) {
+            .sidebar {
+                max-height: 70vh;
+            }
+            
+            .saved-list {
+                max-height: 100px;
+            }
+        }
+        
+        /* Coordinate Marker Pulse */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .pulse-marker {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Xarita Maydon</span>
+        </div>
+        <div class="header-controls">
+            <button class="btn" id="drawPolygonBtn" title="Maydon chizish">
+                <i class="fas fa-draw-polygon"></i>
+                <span class="btn-text">Maydon</span>
+            </button>
+            <button class="btn" id="drawLineBtn" title="Chiziq chizish">
+                <i class="fas fa-route"></i>
+                <span class="btn-text">Chiziq</span>
+            </button>
+            <button class="btn" id="getCoordinateBtn" title="Koordinata olish">
+                <i class="fas fa-crosshairs"></i>
+                <span class="btn-text">GPS</span>
+            </button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <div id="map"></div>
+        
+        <button class="sidebar-toggle" id="toggleSidebar" title="Panelni ochish/yopish">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title"><i class="fas fa-cogs"></i> Sozlamalar</span>
+                <button class="btn btn-icon" id="closeSidebar" style="width: 28px; height: 28px; background: transparent; color: #666;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Xarita turi -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-layer-group"></i> Xarita turi</div>
+                    <select class="map-type-select" id="mapTypeSelect">
+                        <option value="osm">🗺️ OpenStreetMap</option>
+                        <option value="google">🌍 Google Xarita</option>
+                        <option value="satellite">🛰️ Sputnik Tasvir</option>
+                    </select>
+                </div>
+                
+                <!-- Koordinatalar -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-map-pin"></i> Joriy koordinata</div>
+                    <div class="coords-box">
+                        <div class="coords-row">
+                            <span class="coords-label">Kenglik:</span>
+                            <span id="latValue">---</span>
+                        </div>
+                        <div class="coords-row">
+                            <span class="coords-label">Uzunlik:</span>
+                            <span id="lngValue">---</span>
+                        </div>
+                    </div>
+                    <button class="btn" id="copyCoordinatesBtn" style="width: 100%; margin-top: 8px; background: var(--primary); color: white;">
+                        <i class="fas fa-copy"></i> Nusxalash
+                    </button>
+                </div>
+                
+                <!-- GeoJSON Yuklash -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-upload"></i> GeoJSON yuklash</div>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="geojsonFile" accept=".geojson,.json">
+                        <label for="geojsonFile" class="file-input-label">
+                            <i class="fas fa-folder-open"></i> Fayl tanlash
+                        </label>
+                    </div>
+                    <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 6px;">
+                        XonqaMFY.geojson faylini tanlang
+                    </small>
+                </div>
+                
+                <!-- Hisoblash natijalari -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-calculator"></i> Natijalar</div>
+                    <div id="calculationResults" style="color: #666; font-size: 0.85rem;">
+                        Maydon yoki chiziq chizing...
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label class="form-label">Izoh</label>
+                        <textarea id="comment" placeholder="Izoh yozing..."></textarea>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-success" id="saveFeatureBtn">
+                            <i class="fas fa-save"></i> Saqlash
+                        </button>
+                        <button class="btn btn-danger" id="clearAllBtn">
+                            <i class="fas fa-trash"></i> Tozalash
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Saqlanganlar -->
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-history"></i> Saqlanganlar</div>
+                    <div class="saved-list" id="savedItems">
+                        <p style="color: #999; font-size: 0.8rem; text-align: center;">Bo'sh</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText"></span>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    
+    <script>
+        // Global variables
+        let map;
+        let drawnItems = new L.FeatureGroup();
+        let currentLayer = null;
+        let coordinateMode = false;
+        let lastClickedLatLng = null;
+        let coordinateMarker = null;
+        let boundaryLayer = null;
+        
+        // Initialize map
+        function initMap() {
+            // Center on Xonqa region (Uzbekistan)
+            map = L.map('map', {
+                center: [41.45, 60.15],
+                zoom: 13,
+                zoomControl: true
+            });
+            
+            // Add default OSM layer
+            const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap',
+                maxZoom: 19
+            }).addTo(map);
+            
+            map.addLayer(drawnItems);
+            
+            // Drawing controls (programmatic)
+            map.on(L.Draw.Event.CREATED, function (e) {
+                const layer = e.layer;
+                drawnItems.addLayer(layer);
+                calculateFeature(layer);
+                document.getElementById('comment').value = '';
+            });
+            
+            // Click for coordinates
+            map.on('click', function(e) {
+                if (coordinateMode) {
+                    updateCoordinates(e.latlng);
+                    addCoordinateMarker(e.latlng);
+                }
+            });
+            
+            // Mouse move for live coordinates
+            map.on('mousemove', function(e) {
+                if (!coordinateMode) {
+                    document.getElementById('latValue').textContent = e.latlng.lat.toFixed(6);
+                    document.getElementById('lngValue').textContent = e.latlng.lng.toFixed(6);
+                }
+            });
+            
+            // Load saved items
+            loadSavedItems();
+        }
+        
+        // Calculate area or length
+        function calculateFeature(layer) {
+            currentLayer = layer;
+            let html = '';
+            
+            if (layer instanceof L.Polygon) {
+                // Calculate area using Turf.js approximation or simple method
+                const latlngs = layer.getLatLngs()[0];
+                let area = 0;
+                
+                // Simple shoelace formula for area calculation
+                for (let i = 0; i < latlngs.length; i++) {
+                    const j = (i + 1) % latlngs.length;
+                    area += latlngs[i].lng * latlngs[j].lat;
+                    area -= latlngs[j].lng * latlngs[i].lat;
+                }
+                area = Math.abs(area) * 0.5 * 111.32 * 111.32 * 1000; // Rough conversion to m²
+                
+                const areaKm2 = (area / 1000000).toFixed(3);
+                const areaHa = (area / 10000).toFixed(2);
+                
+                // Calculate perimeter
+                let perimeter = 0;
+                for (let i = 0; i < latlngs.length; i++) {
+                    const j = (i + 1) % latlngs.length;
+                    const d = map.distance(latlngs[i], latlngs[j]);
+                    perimeter += d;
+                }
+                
+                html = `
+                    <div class="result-box">
+                        <h4>📐 Maydon natijalari</h4>
+                        <p><strong>Maydon:</strong> ${areaKm2} km²</p>
+                        <p><strong>Gektar:</strong> ${areaHa} ga</p>
+                        <p><strong>Perimeter:</strong> ${(perimeter/1000).toFixed(2)} km</p>
+                    </div>
+                `;
+                layer.featureData = { type: 'polygon', area: areaKm2, hectares: areaHa };
+            } 
+            else if (layer instanceof L.Polyline) {
+                const latlngs = layer.getLatLngs();
+                let length = 0;
+                for (let i = 0; i < latlngs.length - 1; i++) {
+                    length += map.distance(latlngs[i], latlngs[i+1]);
+                }
+                
+                html = `
+                    <div class="result-box">
+                        <h4>📏 Chiziq natijalari</h4>
+                        <p><strong>Uzunlik:</strong> ${(length/1000).toFixed(2)} km</p>
+                        <p><strong>Metr:</strong> ${Math.round(length)} m</p>
+                    </div>
+                `;
+                layer.featureData = { type: 'polyline', length: (length/1000).toFixed(2) };
+            }
+            
+            document.getElementById('calculationResults').innerHTML = html;
+        }
+        
+        // Update coordinate display
+        function updateCoordinates(latlng) {
+            lastClickedLatLng = latlng;
+            document.getElementById('latValue').textContent = latlng.lat.toFixed(6);
+            document.getElementById('lngValue').textContent = latlng.lng.toFixed(6);
+        }
+        
+        // Add coordinate marker
+        function addCoordinateMarker(latlng) {
+            if (coordinateMarker) {
+                map.removeLayer(coordinateMarker);
+            }
+            
+            coordinateMarker = L.marker(latlng, {
+                icon: L.divIcon({
+                    className: 'pulse-marker',
+                    html: '<div style="background: #e74c3c; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
+                })
+            }).addTo(map);
+            
+            coordinateMarker.bindPopup(`
+                <b>Koordinata:</b><br>
+                ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}
+            `).openPopup();
+        }
+        
+        // Copy coordinates
+        function copyCoordinates() {
+            if (!lastClickedLatLng) {
+                showNotification('Avval koordinata tanlang!', 'error');
+                return;
+            }
+            
+            const text = `${lastClickedLatLng.lat.toFixed(6)}, ${lastClickedLatLng.lng.toFixed(6)}`;
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Koordinata nusxalandi!', 'success');
+            });
+        }
+        
+        // Save feature
+        function saveFeature() {
+            const layers = drawnItems.getLayers();
+            if (layers.length === 0 || !layers[layers.length-1].featureData) {
+                showNotification('Avval maydon yoki chiziq chizing!', 'warning');
+                return;
+            }
+            
+            const layer = layers[layers.length-1];
+            const comment = document.getElementById('comment').value || 'Izohsiz';
+            const data = {
+                id: Date.now(),
+                ...layer.featureData,
+                comment: comment,
+                date: new Date().toLocaleString('uz-UZ'),
+                coordinates: layer.getLatLngs()
+            };
+            
+            let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            saved.push(data);
+            localStorage.setItem('mapFeatures', JSON.stringify(saved));
+            
+            loadSavedItems();
+            document.getElementById('comment').value = '';
+            showNotification('Saqlandi!', 'success');
+        }
+        
+        // Load saved items
+        function loadSavedItems() {
+            const saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            const container = document.getElementById('savedItems');
+            
+            if (saved.length === 0) {
+                container.innerHTML = '<p style="color: #999; font-size: 0.8rem; text-align: center;">Bo\'sh</p>';
+                return;
+            }
+            
+            container.innerHTML = saved.slice().reverse().map(item => `
+                <div class="saved-item">
+                    <div class="saved-item-header">
+                        <span class="saved-item-type">${item.type === 'polygon' ? '⬡ Maydon' : '▬ Chiziq'}</span>
+                        <i class="fas fa-trash saved-item-delete" onclick="deleteSavedItem(${item.id})"></i>
+                    </div>
+                    <div style="margin-top: 4px;">
+                        ${item.type === 'polygon' 
+                            ? `<strong>${item.area} km²</strong>` 
+                            : `<strong>${item.length} km</strong>`
+                        }
+                    </div>
+                    <div style="color: #666; font-size: 0.75rem; margin-top: 2px;">
+                        ${item.comment}
+                    </div>
+                    <div style="color: #999; font-size: 0.7rem; margin-top: 4px;">
+                        ${item.date}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Delete saved item
+        function deleteSavedItem(id) {
+            let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            saved = saved.filter(item => item.id !== id);
+            localStorage.setItem('mapFeatures', JSON.stringify(saved));
+            loadSavedItems();
+            showNotification('O\'chirildi!', 'success');
+        }
+        
+        // Clear all
+        function clearAll() {
+            if (!confirm('Barchasini o\'chirishni istaysizmi?')) return;
+            drawnItems.clearLayers();
+            if (coordinateMarker) map.removeLayer(coordinateMarker);
+            document.getElementById('calculationResults').innerHTML = 'Maydon yoki chiziq chizing...';
+            document.getElementById('comment').value = '';
+            showNotification('Tozalandi!', 'success');
+        }
+        
+        // Change map type
+        function changeMapType(type) {
+            map.eachLayer(layer => {
+                if (layer._url) map.removeLayer(layer);
+            });
+            
+            let url;
+            switch(type) {
+                case 'google':
+                    url = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
+                    break;
+                case 'satellite':
+                    url = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
+                    break;
+                default:
+                    url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            }
+            
+            L.tileLayer(url, {
+                maxZoom: 20,
+                attribution: type === 'osm' ? '© OpenStreetMap' : '© Google'
+            }).addTo(map);
+            
+            map.addLayer(drawnItems);
+            if (boundaryLayer) map.addLayer(boundaryLayer);
+        }
+        
+        // Handle GeoJSON file upload
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const geojson = JSON.parse(event.target.result);
+                    
+                    if (boundaryLayer) map.removeLayer(boundaryLayer);
+                    
+                    boundaryLayer = L.geoJSON(geojson, {
+                        style: {
+                            color: '#e74c3c',
+                            weight: 3,
+                            fillOpacity: 0.1,
+                            fillColor: '#e74c3c'
+                        }
+                    }).addTo(map);
+                    
+                    map.fitBounds(boundaryLayer.getBounds());
+                    showNotification('GeoJSON yuklandi!', 'success');
+                } catch (err) {
+                    showNotification('Xatolik! Noto\'g\'ri format', 'error');
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Toggle coordinate mode
+        function toggleCoordinateMode() {
+            coordinateMode = !coordinateMode;
+            const btn = document.getElementById('getCoordinateBtn');
+            
+            if (coordinateMode) {
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fas fa-times"></i><span class="btn-text">Bekor</span>';
+                map.getContainer().style.cursor = 'crosshair';
+                showNotification('Koordinata olish rejimi', 'info');
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fas fa-crosshairs"></i><span class="btn-text">GPS</span>';
+                map.getContainer().style.cursor = '';
+                if (coordinateMarker) map.removeLayer(coordinateMarker);
+            }
+        }
+        
+        // Show notification
+        function showNotification(text, type = 'success') {
+            const notif = document.getElementById('notification');
+            const icon = type === 'success' ? 'check-circle' : 
+                        type === 'error' ? 'exclamation-circle' : 'info-circle';
+            
+            notif.innerHTML = `<i class="fas fa-${icon}"></i> <span>${text}</span>`;
+            notif.style.background = type === 'success' ? '#27ae60' : 
+                                    type === 'error' ? '#e74c3c' : '#3498db';
+            
+            notif.classList.add('show');
+            setTimeout(() => notif.classList.remove('show'), 2500);
+        }
+        
+        // Sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        }
+        
+        // DOM Ready
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+            
+            // Drawing buttons
+            document.getElementById('drawPolygonBtn').addEventListener('click', () => {
+                new L.Draw.Polygon(map, {
+                    allowIntersection: false,
+                    shapeOptions: { color: '#2980b9', weight: 3 }
+                }).enable();
+            });
+            
+            document.getElementById('drawLineBtn').addEventListener('click', () => {
+                new L.Draw.Polyline(map, {
+                    shapeOptions: { color: '#e74c3c', weight: 4 }
+                }).enable();
+            });
+            
+            document.getElementById('getCoordinateBtn').addEventListener('click', toggleCoordinateMode);
+            document.getElementById('copyCoordinatesBtn').addEventListener('click', copyCoordinates);
+            document.getElementById('saveFeatureBtn').addEventListener('click', saveFeature);
+            document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+            document.getElementById('geojsonFile').addEventListener('change', handleFileUpload);
+            document.getElementById('mapTypeSelect').addEventListener('change', (e) => changeMapType(e.target.value));
+            
+            // Sidebar controls
+            document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
+            document.getElementById('closeSidebar').addEventListener('click', toggleSidebar);
+            
+            // Close sidebar on mobile when clicking outside
+            document.getElementById('map').addEventListener('click', () => {
+                if (window.innerWidth <= 768 && !document.getElementById('sidebar').classList.contains('hidden')) {
+                    toggleSidebar();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
