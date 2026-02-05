@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -538,6 +538,7 @@
         /* Popup Custom */
         .custom-popup {
             font-size: 0.9rem;
+            min-width: 200px;
         }
         
         .popup-title {
@@ -610,9 +611,9 @@
                 <div class="card">
                     <div class="card-title"><i class="fas fa-layer-group"></i> Xarita turi</div>
                     <select class="map-type-select" id="mapTypeSelect">
-                        <option value="osm">🗺️ OpenStreetMap</option>
-                        <option value="google">🌍 Google Xarita</option>
-                        <option value="satellite">🛰️ Sputnik Tasvir</option>
+                        <option value="osm">OpenStreetMap</option>
+                        <option value="google">Google Xarita</option>
+                        <option value="satellite">Sputnik Tasvir</option>
                     </select>
                 </div>
                 
@@ -685,10 +686,10 @@
                     <select id="featureType">
                         <option value="uy">Uy / Hovli</option>
                         <option value="dala">Dala / Ekin maydoni</option>
-                        <option value="bog'>Bog' / O'rmon</option>
-                        <option value="yulka'>Yo'l / Yulka</option>
-                        <option value="suv'>Suv obyekti</option>
-                        <option value="boshqa'>Boshqa</option>
+                        <option value="bog">Bog' / O'rmon</option>
+                        <option value="yulka">Yo'l / Yulka</option>
+                        <option value="suv">Suv obyekti</option>
+                        <option value="boshqa">Boshqa</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -729,7 +730,7 @@
         let lastClickedLatLng = null;
         let coordinateMarker = null;
         let layerCounter = 0;
-        let layersData = new Map(); // Store layer data
+        let layersData = new Map();
         
         // Initialize map
         function initMap() {
@@ -741,7 +742,7 @@
             
             // Add default OSM layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap',
+                attribution: 'OpenStreetMap',
                 maxZoom: 19
             }).addTo(map);
             
@@ -765,9 +766,11 @@
                     owner: '',
                     cadastre: '',
                     description: '',
-                    ...measurements,
                     created: new Date().toLocaleString('uz-UZ')
                 };
+                
+                // Add measurements
+                Object.assign(properties, measurements);
                 
                 layersData.set(layerId, { layer: layer, properties: properties });
                 
@@ -775,8 +778,8 @@
                 updateLayerPopup(layer, properties);
                 
                 // Add click event
-                layer.on('click', function(e) {
-                    L.DomEvent.stopPropagation(e);
+                layer.on('click', function(evt) {
+                    L.DomEvent.stopPropagation(evt);
                     selectFeature(layerId);
                 });
                 
@@ -794,7 +797,6 @@
                     updateCoordinates(e.latlng);
                     addCoordinateMarker(e.latlng);
                 } else {
-                    // Deselect when clicking on map
                     deselectAll();
                 }
             });
@@ -851,56 +853,61 @@
         
         // Update layer popup
         function updateLayerPopup(layer, props) {
-            let popupContent = `<div class="custom-popup">
-                <div class="popup-title">${props.name}</div>`;
+            let popupContent = '<div class="custom-popup">';
+            popupContent += '<div class="popup-title">' + props.name + '</div>';
             
             if (props.type) {
                 const typeNames = {
-                    'uy': '🏠 Uy / Hovli',
-                    'dala': '🌾 Dala / Ekin',
-                    'bog': "🌳 Bog' / O'rmon",
-                    'yulka': '🛣️ Yo'l / Yulka',
-                    'suv': '💧 Suv obyekti',
-                    'boshqa': '📍 Boshqa'
+                    'uy': 'Uy / Hovli',
+                    'dala': 'Dala / Ekin',
+                    'bog': "Bog' / O'rmon",
+                    'yulka': "Yo'l / Yulka",
+                    'suv': 'Suv obyekti',
+                    'boshqa': 'Boshqa'
                 };
-                popupContent += `<div class="popup-row">
-                    <span class="popup-label">Turi:</span>
-                    <span class="popup-value">${typeNames[props.type] || props.type}</span>
-                </div>`;
+                popupContent += '<div class="popup-row">';
+                popupContent += '<span class="popup-label">Turi:</span>';
+                popupContent += '<span class="popup-value">' + (typeNames[props.type] || props.type) + '</span>';
+                popupContent += '</div>';
             }
             
             if (props.area_ha) {
-                popupContent += `<div class="popup-row">
-                    <span class="popup-label">Maydon:</span>
-                    <span class="popup-value">${props.area_ha} ga (${props.area_m2} m²)</span>
-                </div>`;
+                popupContent += '<div class="popup-row">';
+                popupContent += '<span class="popup-label">Maydon:</span>';
+                popupContent += '<span class="popup-value">' + props.area_ha + ' ga</span>';
+                popupContent += '</div>';
+                
+                popupContent += '<div class="popup-row">';
+                popupContent += '<span class="popup-label">Kv.m:</span>';
+                popupContent += '<span class="popup-value">' + props.area_m2.toLocaleString() + ' m2</span>';
+                popupContent += '</div>';
             }
             
             if (props.length_m) {
-                popupContent += `<div class="popup-row">
-                    <span class="popup-label">Uzunlik:</span>
-                    <span class="popup-value">${props.length_m} m</span>
-                </div>`;
+                popupContent += '<div class="popup-row">';
+                popupContent += '<span class="popup-label">Uzunlik:</span>';
+                popupContent += '<span class="popup-value">' + props.length_m + ' m</span>';
+                popupContent += '</div>';
             }
             
             if (props.owner) {
-                popupContent += `<div class="popup-row">
-                    <span class="popup-label">Egasi:</span>
-                    <span class="popup-value">${props.owner}</span>
-                </div>`;
+                popupContent += '<div class="popup-row">';
+                popupContent += '<span class="popup-label">Egasi:</span>';
+                popupContent += '<span class="popup-value">' + props.owner + '</span>';
+                popupContent += '</div>';
             }
             
             if (props.cadastre) {
-                popupContent += `<div class="popup-row">
-                    <span class="popup-label">Kadastr:</span>
-                    <span class="popup-value">${props.cadastre}</span>
-                </div>`;
+                popupContent += '<div class="popup-row">';
+                popupContent += '<span class="popup-label">Kadastr:</span>';
+                popupContent += '<span class="popup-value">' + props.cadastre + '</span>';
+                popupContent += '</div>';
             }
             
             if (props.description) {
-                popupContent += `<div class="popup-row" style="margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">
-                    <span class="popup-value" style="font-style: italic; color: #666;">${props.description}</span>
-                </div>`;
+                popupContent += '<div class="popup-row" style="margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">';
+                popupContent += '<span class="popup-value" style="font-style: italic; color: #666;">' + props.description + '</span>';
+                popupContent += '</div>';
             }
             
             popupContent += '</div>';
@@ -919,11 +926,13 @@
             selectedLayer = data.layer;
             
             // Highlight
-            selectedLayer.setStyle({
-                color: '#e74c3c',
-                weight: 4,
-                fillOpacity: 0.4
-            });
+            if (selectedLayer.setStyle) {
+                selectedLayer.setStyle({
+                    color: '#e74c3c',
+                    weight: 4,
+                    fillOpacity: 0.4
+                });
+            }
             
             // Update UI
             updateFeatureList();
@@ -932,17 +941,16 @@
             // Fly to feature
             if (selectedLayer.getBounds) {
                 map.fitBounds(selectedLayer.getBounds(), { padding: [50, 50], maxZoom: 18 });
-            } else if (selectedLayer.getLatLng) {
-                map.setView(selectedLayer.getLatLng(), 16);
             }
         }
         
         // Deselect all
         function deselectAll() {
-            if (selectedLayer) {
+            if (selectedLayer && selectedLayer.setStyle) {
+                const isPolygon = selectedLayer instanceof L.Polygon;
                 selectedLayer.setStyle({
-                    color: selectedLayer instanceof L.Polygon ? '#2980b9' : '#e74c3c',
-                    weight: selectedLayer instanceof L.Polygon ? 3 : 4,
+                    color: isPolygon ? '#2980b9' : '#e74c3c',
+                    weight: isPolygon ? 3 : 4,
                     fillOpacity: 0.2
                 });
             }
@@ -962,23 +970,29 @@
             }
             
             let html = '';
-            layersData.forEach((data, id) => {
+            layersData.forEach(function(data, id) {
                 const props = data.properties;
-                const isSelected = id === selectedLayerId;
+                const isSelected = (id === selectedLayerId);
                 
-                html += `<div class="feature-item ${isSelected ? 'selected' : ''}" onclick="selectFeature('${id}')">
-                    <div class="feature-info">
-                        <div class="feature-name">${props.name}</div>
-                        <div class="feature-meta">
-                            ${props.area_ha ? props.area_ha + ' ga' : (props.length_m ? props.length_m + ' m' : '')}
-                            ${props.owner ? ' • ' + props.owner : ''}
-                        </div>
-                    </div>
-                    <div class="feature-actions" onclick="event.stopPropagation()">
-                        <button class="btn-edit" onclick="openEditModal('${id}')" title="Tahrirlash"><i class="fas fa-edit"></i></button>
-                        <button class="btn-delete" onclick="deleteFeature('${id}')" title="O\'chirish"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>`;
+                let sizeInfo = '';
+                if (props.area_ha) {
+                    sizeInfo = props.area_ha + ' ga';
+                } else if (props.length_m) {
+                    sizeInfo = props.length_m + ' m';
+                }
+                
+                let ownerInfo = props.owner ? ' | ' + props.owner : '';
+                
+                html += '<div class="feature-item ' + (isSelected ? 'selected' : '') + '" onclick="selectFeature(\'' + id + '\')">';
+                html += '<div class="feature-info">';
+                html += '<div class="feature-name">' + props.name + '</div>';
+                html += '<div class="feature-meta">' + sizeInfo + ownerInfo + '</div>';
+                html += '</div>';
+                html += '<div class="feature-actions" onclick="event.stopPropagation()">';
+                html += '<button class="btn-edit" onclick="openEditModal(\'' + id + '\')" title="Tahrirlash"><i class="fas fa-edit"></i></button>';
+                html += '<button class="btn-delete" onclick="deleteFeature(\'' + id + '\')" title="O\'chirish"><i class="fas fa-trash"></i></button>';
+                html += '</div>';
+                html += '</div>';
             });
             
             container.innerHTML = html;
@@ -992,33 +1006,32 @@
             let html = '<div class="result-box">';
             
             if (props.area_ha) {
-                html += `
-                    <div class="result-item">
-                        <span class="result-label">Maydon:</span>
-                        <span class="result-value">${props.area_ha} ga</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Kv.metr:</span>
-                        <span class="result-value">${props.area_m2.toLocaleString()} m²</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Perimeter:</span>
-                        <span class="result-value">${props.perimeter_m} m</span>
-                    </div>
-                `;
+                html += '<div class="result-item">';
+                html += '<span class="result-label">Maydon:</span>';
+                html += '<span class="result-value">' + props.area_ha + ' ga</span>';
+                html += '</div>';
+                
+                html += '<div class="result-item">';
+                html += '<span class="result-label">Kv.metr:</span>';
+                html += '<span class="result-value">' + props.area_m2.toLocaleString() + ' m2</span>';
+                html += '</div>';
+                
+                html += '<div class="result-item">';
+                html += '<span class="result-label">Perimeter:</span>';
+                html += '<span class="result-value">' + props.perimeter_m + ' m</span>';
+                html += '</div>';
             }
             
             if (props.length_m) {
-                html += `
-                    <div class="result-item">
-                        <span class="result-label">Uzunlik:</span>
-                        <span class="result-value">${props.length_m} m</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Kilometr:</span>
-                        <span class="result-value">${props.length_km} km</span>
-                    </div>
-                `;
+                html += '<div class="result-item">';
+                html += '<span class="result-label">Uzunlik:</span>';
+                html += '<span class="result-value">' + props.length_m + ' m</span>';
+                html += '</div>';
+                
+                html += '<div class="result-item">';
+                html += '<span class="result-label">Kilometr:</span>';
+                html += '<span class="result-value">' + props.length_km + ' km</span>';
+                html += '</div>';
             }
             
             html += '</div>';
@@ -1064,7 +1077,7 @@
             updateLayerPopup(data.layer, data.properties);
             updateFeatureList();
             
-            if (selectedLayerId === selectedLayerId) {
+            if (selectedLayerId) {
                 showFeatureDetails(data.properties);
             }
             
@@ -1098,10 +1111,12 @@
             }
             
             const features = [];
-            layersData.forEach((data, id) => {
+            layersData.forEach(function(data, id) {
                 const geojson = data.layer.toGeoJSON();
-                geojson.properties = { ...data.properties };
-                geojson.properties.id = id;
+                geojson.properties = {};
+                for (var key in data.properties) {
+                    geojson.properties[key] = data.properties[key];
+                }
                 features.push(geojson);
             });
             
@@ -1136,7 +1151,7 @@
                     const geojson = JSON.parse(e.target.result);
                     
                     if (geojson.type === 'FeatureCollection' && geojson.features) {
-                        geojson.features.forEach(feature => {
+                        geojson.features.forEach(function(feature) {
                             const layer = L.geoJSON(feature).getLayers()[0];
                             layerCounter++;
                             const layerId = 'imported_' + layerCounter;
@@ -1145,20 +1160,24 @@
                             const measurements = calculateMeasurements(layer);
                             const properties = {
                                 id: layerId,
-                                name: feature.properties?.name || 'Obyekt ' + layerCounter,
-                                type: feature.properties?.type || 'boshqa',
-                                owner: feature.properties?.owner || '',
-                                cadastre: feature.properties?.cadastre || '',
-                                description: feature.properties?.description || '',
-                                ...measurements,
+                                name: (feature.properties && feature.properties.name) ? feature.properties.name : 'Obyekt ' + layerCounter,
+                                type: (feature.properties && feature.properties.type) ? feature.properties.type : 'boshqa',
+                                owner: (feature.properties && feature.properties.owner) ? feature.properties.owner : '',
+                                cadastre: (feature.properties && feature.properties.cadastre) ? feature.properties.cadastre : '',
+                                description: (feature.properties && feature.properties.description) ? feature.properties.description : '',
                                 created: new Date().toLocaleString('uz-UZ')
                             };
                             
+                            for (var key in measurements) {
+                                properties[key] = measurements[key];
+                            }
+                            
                             layersData.set(layerId, { layer: layer, properties: properties });
                             
+                            const isPolygon = layer instanceof L.Polygon;
                             layer.setStyle({
-                                color: layer instanceof L.Polygon ? '#2980b9' : '#e74c3c',
-                                weight: layer instanceof L.Polygon ? 3 : 4,
+                                color: isPolygon ? '#2980b9' : '#e74c3c',
+                                weight: isPolygon ? 3 : 4,
                                 fillOpacity: 0.2
                             });
                             
@@ -1173,7 +1192,7 @@
                         });
                         
                         updateFeatureList();
-                        showNotification(`${geojson.features.length} ta obyekt yuklandi!`, 'success');
+                        showNotification(geojson.features.length + ' ta obyekt yuklandi!', 'success');
                     }
                 } catch (err) {
                     showNotification('Xatolik! Noto\'g\'ri GeoJSON format', 'error');
@@ -1197,10 +1216,7 @@
             }
             
             coordinateMarker = L.marker(latlng).addTo(map);
-            coordinateMarker.bindPopup(`
-                <b>Koordinata:</b><br>
-                ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}
-            `).openPopup();
+            coordinateMarker.bindPopup('<b>Koordinata:</b><br>' + latlng.lat.toFixed(6) + ', ' + latlng.lng.toFixed(6)).openPopup();
         }
         
         // Copy coordinates
@@ -1210,33 +1226,30 @@
                 return;
             }
             
-            const text = `${lastClickedLatLng.lat.toFixed(6)}, ${lastClickedLatLng.lng.toFixed(6)}`;
-            navigator.clipboard.writeText(text).then(() => {
+            const text = lastClickedLatLng.lat.toFixed(6) + ', ' + lastClickedLatLng.lng.toFixed(6);
+            navigator.clipboard.writeText(text).then(function() {
                 showNotification('Koordinata nusxalandi!', 'success');
             });
         }
         
         // Change map type
         function changeMapType(type) {
-            map.eachLayer(layer => {
+            map.eachLayer(function(layer) {
                 if (layer._url) map.removeLayer(layer);
             });
             
             let url;
-            switch(type) {
-                case 'google':
-                    url = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
-                    break;
-                case 'satellite':
-                    url = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
-                    break;
-                default:
-                    url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            if (type === 'google') {
+                url = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
+            } else if (type === 'satellite') {
+                url = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
+            } else {
+                url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
             }
             
             L.tileLayer(url, {
                 maxZoom: 20,
-                attribution: type === 'osm' ? '© OpenStreetMap' : '© Google'
+                attribution: type === 'osm' ? 'OpenStreetMap' : 'Google'
             }).addTo(map);
             
             map.addLayer(drawnItems);
@@ -1261,17 +1274,29 @@
         }
         
         // Show notification
-        function showNotification(text, type = 'success') {
+        function showNotification(text, type) {
             const notif = document.getElementById('notification');
-            const icon = type === 'success' ? 'check-circle' : 
-                        type === 'error' ? 'exclamation-circle' : 'info-circle';
+            let icon = 'check-circle';
+            let color = '#27ae60';
             
-            notif.innerHTML = `<i class="fas fa-${icon}"></i> <span>${text}</span>`;
-            notif.style.background = type === 'success' ? '#27ae60' : 
-                                    type === 'error' ? '#e74c3c' : '#3498db';
+            if (type === 'error') {
+                icon = 'exclamation-circle';
+                color = '#e74c3c';
+            } else if (type === 'warning') {
+                icon = 'exclamation-triangle';
+                color = '#f39c12';
+            } else if (type === 'info') {
+                icon = 'info-circle';
+                color = '#3498db';
+            }
+            
+            notif.innerHTML = '<i class="fas fa-' + icon + '"></i> <span>' + text + '</span>';
+            notif.style.background = color;
             
             notif.classList.add('show');
-            setTimeout(() => notif.classList.remove('show'), 3000);
+            setTimeout(function() {
+                notif.classList.remove('show');
+            }, 3000);
         }
         
         // Sidebar toggle
@@ -1284,14 +1309,14 @@
             initMap();
             
             // Drawing buttons
-            document.getElementById('drawPolygonBtn').addEventListener('click', () => {
+            document.getElementById('drawPolygonBtn').addEventListener('click', function() {
                 new L.Draw.Polygon(map, {
                     allowIntersection: false,
                     shapeOptions: { color: '#2980b9', weight: 3, fillOpacity: 0.2 }
                 }).enable();
             });
             
-            document.getElementById('drawLineBtn').addEventListener('click', () => {
+            document.getElementById('drawLineBtn').addEventListener('click', function() {
                 new L.Draw.Polyline(map, {
                     shapeOptions: { color: '#e74c3c', weight: 4 }
                 }).enable();
@@ -1301,21 +1326,23 @@
             document.getElementById('copyCoordinatesBtn').addEventListener('click', copyCoordinates);
             document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
             document.getElementById('closeSidebar').addEventListener('click', toggleSidebar);
-            document.getElementById('editFeatureBtn').addEventListener('click', () => {
+            document.getElementById('editFeatureBtn').addEventListener('click', function() {
                 if (selectedLayerId) openEditModal(selectedLayerId);
             });
-            document.getElementById('deleteFeatureBtn').addEventListener('click', () => {
+            document.getElementById('deleteFeatureBtn').addEventListener('click', function() {
                 if (selectedLayerId) deleteFeature(selectedLayerId);
             });
             document.getElementById('exportGeoJsonBtn').addEventListener('click', exportGeoJson);
-            document.getElementById('importGeoJsonBtn').addEventListener('click', () => {
+            document.getElementById('importGeoJsonBtn').addEventListener('click', function() {
                 document.getElementById('importFile').click();
             });
             document.getElementById('importFile').addEventListener('change', importGeoJson);
-            document.getElementById('mapTypeSelect').addEventListener('change', (e) => changeMapType(e.target.value));
+            document.getElementById('mapTypeSelect').addEventListener('change', function(e) {
+                changeMapType(e.target.value);
+            });
             
             // Close modal on outside click
-            document.getElementById('editModal').addEventListener('click', (e) => {
+            document.getElementById('editModal').addEventListener('click', function(e) {
                 if (e.target.id === 'editModal') closeModal();
             });
         });
