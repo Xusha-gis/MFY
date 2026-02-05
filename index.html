@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xarita Maydon - GeoJSON Exporter</title>
+    <title>Xarita Maydon - Kompakt</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,11 +19,11 @@
             --primary: #2980b9;
             --secondary: #27ae60;
             --danger: #e74c3c;
-            --warning: #f39c12;
             --bg: #f8f9fa;
             --card-bg: #ffffff;
             --text: #2c3e50;
             --border: #e0e0e0;
+            --warning: #f39c12;
         }
         
         body {
@@ -34,7 +34,7 @@
             overflow: hidden;
         }
         
-        /* Header */
+        /* Header - Kompakt */
         header {
             background: linear-gradient(135deg, #2c3e50, var(--primary));
             color: white;
@@ -63,6 +63,7 @@
             gap: 6px;
         }
         
+        /* Tugmalar - Kichik */
         .btn {
             padding: 6px 10px;
             border: none;
@@ -105,19 +106,20 @@
             position: relative;
         }
         
+        /* Map */
         #map {
             flex: 1;
             z-index: 1;
             min-height: 0;
         }
         
-        /* Sidebar */
+        /* Sidebar - Floating Panel */
         .sidebar {
             position: absolute;
             right: 10px;
             top: 10px;
             bottom: 10px;
-            width: 340px;
+            width: 350px;
             background: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
@@ -153,14 +155,47 @@
             padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: var(--bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
         
         /* Cards */
         .card {
             background: var(--bg);
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--border);
         }
         
@@ -203,7 +238,7 @@
         
         textarea {
             resize: vertical;
-            min-height: 50px;
+            min-height: 60px;
         }
         
         /* Buttons Group */
@@ -232,7 +267,7 @@
         .btn-danger:hover { background: #c0392b !important; }
         
         .btn-warning { background: var(--warning) !important; color: white !important; }
-        .btn-warning:hover { background: #d68910 !important; }
+        .btn-warning:hover { background: #e67e22 !important; }
         
         /* Results Box */
         .result-box {
@@ -246,118 +281,118 @@
         .result-box h4 {
             font-size: 0.8rem;
             color: var(--text);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 4px 0;
-            padding: 4px 0;
-            border-bottom: 1px dashed #ddd;
-        }
-        
-        .result-item:last-child {
-            border-bottom: none;
-        }
-        
-        .result-label {
-            font-weight: 600;
+        .result-box p {
+            margin: 2px 0;
             color: #555;
         }
-        
-        .result-value {
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        /* Feature List */
-        .feature-list {
-            max-height: 120px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        
-        .feature-item {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 8px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .feature-item:hover {
-            border-color: var(--primary);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .feature-item.selected {
-            border-color: var(--primary);
-            background: #e8f4fc;
-        }
-        
-        .feature-info {
-            flex: 1;
-        }
-        
-        .feature-name {
-            font-weight: 600;
-            color: var(--text);
-        }
-        
-        .feature-meta {
-            font-size: 0.75rem;
-            color: #666;
-            margin-top: 2px;
-        }
-        
-        .feature-actions {
-            display: flex;
-            gap: 4px;
-        }
-        
-        .feature-actions button {
-            width: 24px;
-            height: 24px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .btn-edit { background: var(--primary); color: white; }
-        .btn-delete { background: var(--danger); color: white; }
         
         /* Coordinates Display */
         .coords-box {
             background: #fff3cd;
             border: 1px solid #ffeaa7;
-            padding: 8px;
+            padding: 10px;
             border-radius: 6px;
             font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
         
         .coords-row {
             display: flex;
             justify-content: space-between;
-            margin: 2px 0;
+            margin: 3px 0;
         }
         
         .coords-label {
             font-weight: 600;
             color: #856404;
         }
+        
+        /* File Input */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 8px 12px;
+            background: var(--primary);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .file-input-label:hover {
+            background: #1a5276;
+        }
+        
+        /* Saved Items */
+        .saved-list {
+            max-height: 150px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .saved-item {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.8rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .saved-item:hover {
+            background: #f8f9fa;
+            border-color: var(--primary);
+        }
+        
+        .saved-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .saved-item-type {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+        
+        .saved-item-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .saved-item-action {
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 2px;
+        }
+        
+        .saved-item-action.edit { color: var(--primary); }
+        .saved-item-action.delete { color: var(--danger); }
+        .saved-item-action.zoom { color: var(--secondary); }
         
         /* Map Type Selector */
         .map-type-select {
@@ -395,6 +430,33 @@
             color: white;
         }
         
+        /* Auto-load status */
+        .auto-load-status {
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .auto-load-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .auto-load-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .auto-load-status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
         /* Notification */
         .notification {
             position: fixed;
@@ -420,7 +482,7 @@
             opacity: 1;
         }
         
-        /* Modal */
+        /* Modal for editing */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -428,59 +490,55 @@
             right: 0;
             bottom: 0;
             background: rgba(0,0,0,0.5);
-            z-index: 3000;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
         }
         
-        .modal-overlay.show {
-            display: flex;
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
         
         .modal {
             background: white;
             border-radius: 12px;
-            width: 100%;
-            max-width: 400px;
+            width: 90%;
+            max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
         .modal-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px 12px 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
         .modal-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--text);
         }
         
         .modal-close {
             background: none;
             border: none;
+            color: white;
             font-size: 1.2rem;
             cursor: pointer;
-            color: #666;
         }
         
         .modal-body {
-            padding: 16px;
-        }
-        
-        .modal-footer {
-            padding: 12px 16px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
+            padding: 20px;
         }
         
         /* Scrollbar */
@@ -497,7 +555,7 @@
             border-radius: 3px;
         }
         
-        /* Mobile */
+        /* Mobile Optimizations */
         @media (max-width: 768px) {
             header {
                 padding: 6px 10px;
@@ -533,39 +591,86 @@
                 height: 50px;
                 font-size: 1.5rem;
             }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .leaflet-control-zoom {
+                margin-top: 60px !important;
+            }
         }
         
-        /* Popup Custom */
-        .custom-popup {
-            font-size: 0.9rem;
-            min-width: 200px;
+        /* Small height screens */
+        @media (max-height: 600px) {
+            .sidebar {
+                max-height: 70vh;
+            }
+            
+            .saved-list {
+                max-height: 100px;
+            }
         }
         
-        .popup-title {
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 8px;
-            font-size: 1rem;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 4px;
+        /* Coordinate Marker Pulse */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
         
-        .popup-row {
+        .pulse-marker {
+            animation: pulse 2s infinite;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #0c5460;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 6px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Hidden file inputs */
+        #autoFileInput {
+            position: absolute;
+            top: -1000px;
+            left: -1000px;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Feature Properties */
+        .feature-properties {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .prop-row {
             display: flex;
             justify-content: space-between;
-            margin: 4px 0;
-            padding: 3px 0;
-            border-bottom: 1px dotted #eee;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
         }
         
-        .popup-label {
+        .prop-label {
             font-weight: 600;
             color: #555;
         }
         
-        .popup-value {
-            color: var(--text);
-            font-weight: 500;
+        .prop-value {
+            color: #333;
         }
     </style>
 </head>
@@ -576,7 +681,7 @@
             <span>Xarita Maydon</span>
         </div>
         <div class="header-controls">
-            <button class="btn" id="drawPolygonBtn" title="Maydon chizish (Hovli, Dala)">
+            <button class="btn" id="drawPolygonBtn" title="Maydon chizish">
                 <i class="fas fa-draw-polygon"></i>
                 <span class="btn-text">Maydon</span>
             </button>
@@ -588,126 +693,232 @@
                 <i class="fas fa-crosshairs"></i>
                 <span class="btn-text">GPS</span>
             </button>
+            <button class="btn" id="exportAllBtn" title="Barchasini yuklab olish">
+                <i class="fas fa-download"></i>
+                <span class="btn-text">Yuklash</span>
+            </button>
         </div>
     </header>
     
     <div class="main-container">
         <div id="map"></div>
         
-        <button class="sidebar-toggle" id="toggleSidebar">
+        <button class="sidebar-toggle" id="toggleSidebar" title="Panelni ochish/yopish">
             <i class="fas fa-bars"></i>
         </button>
         
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <span class="sidebar-title"><i class="fas fa-cogs"></i> Boshqaruv</span>
+                <span class="sidebar-title"><i class="fas fa-cogs"></i> Sozlamalar</span>
                 <button class="btn btn-icon" id="closeSidebar" style="width: 28px; height: 28px; background: transparent; color: #666;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
             <div class="sidebar-content">
-                <!-- Xarita turi -->
-                <div class="card">
-                    <div class="card-title"><i class="fas fa-layer-group"></i> Xarita turi</div>
-                    <select class="map-type-select" id="mapTypeSelect">
-                        <option value="osm">OpenStreetMap</option>
-                        <option value="google">Google Xarita</option>
-                        <option value="satellite">Sputnik Tasvir</option>
-                    </select>
+                <!-- Tabs -->
+                <div class="tabs">
+                    <div class="tab active" data-tab="draw">Chizish</div>
+                    <div class="tab" data-tab="data">Ma'lumotlar</div>
+                    <div class="tab" data-tab="settings">Sozlamalar</div>
                 </div>
                 
-                <!-- Joriy koordinata -->
-                <div class="card">
-                    <div class="card-title"><i class="fas fa-map-pin"></i> Joriy koordinata</div>
-                    <div class="coords-box">
-                        <div class="coords-row">
-                            <span class="coords-label">Kenglik:</span>
-                            <span id="latValue">---</span>
+                <!-- Draw Tab -->
+                <div class="tab-content active" id="drawTab">
+                    <!-- Koordinatalar -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-map-pin"></i> Joriy koordinata</div>
+                        <div class="coords-box">
+                            <div class="coords-row">
+                                <span class="coords-label">Kenglik:</span>
+                                <span id="latValue">---</span>
+                            </div>
+                            <div class="coords-row">
+                                <span class="coords-label">Uzunlik:</span>
+                                <span id="lngValue">---</span>
+                            </div>
                         </div>
-                        <div class="coords-row">
-                            <span class="coords-label">Uzunlik:</span>
-                            <span id="lngValue">---</span>
+                        <button class="btn" id="copyCoordinatesBtn" style="width: 100%; margin-top: 8px; background: var(--primary); color: white;">
+                            <i class="fas fa-copy"></i> Nusxalash
+                        </button>
+                    </div>
+                    
+                    <!-- Maydon xususiyatlari -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-tags"></i> Maydon xususiyatlari</div>
+                        <div class="form-group">
+                            <label class="form-label">Nomi</label>
+                            <input type="text" id="featureName" placeholder="Maydon nomi">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Turi</label>
+                            <select id="featureType">
+                                <option value="uylar">Uylar</option>
+                                <option value="dalalar">Dalalar</option>
+                                <option value="yaylov">Yaylov</option>
+                                <option value="o'rmon">O'rmon</option>
+                                <option value="suv">Suv maydoni</option>
+                                <option value="boshqa">Boshqa</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Izoh</label>
+                            <textarea id="comment" placeholder="Qo'shimcha izoh..."></textarea>
                         </div>
                     </div>
-                    <button class="btn" id="copyCoordinatesBtn" style="width: 100%; margin-top: 8px; background: var(--primary); color: white;">
-                        <i class="fas fa-copy"></i> Nusxalash
-                    </button>
+                    
+                    <!-- Hisoblash natijalari -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-calculator"></i> Natijalar</div>
+                        <div id="calculationResults" style="color: #666; font-size: 0.85rem;">
+                            Maydon yoki chiziq chizing...
+                        </div>
+                        
+                        <div class="btn-group" style="margin-top: 10px;">
+                            <button class="btn btn-success" id="saveFeatureBtn">
+                                <i class="fas fa-save"></i> Saqlash
+                            </button>
+                            <button class="btn btn-warning" id="updateFeatureBtn">
+                                <i class="fas fa-edit"></i> Yangilash
+                            </button>
+                            <button class="btn btn-danger" id="clearAllBtn">
+                                <i class="fas fa-trash"></i> Tozalash
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Chizilgan obyektlar ro'yxati -->
-                <div class="card">
-                    <div class="card-title"><i class="fas fa-list"></i> Chizilgan obyektlar</div>
-                    <div id="featureList" class="feature-list">
-                        <p style="color: #999; font-size: 0.8rem; text-align: center;">Hozircha bo'sh</p>
+                <!-- Data Tab -->
+                <div class="tab-content" id="dataTab">
+                    <!-- GeoJSON Status -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-upload"></i> XonqaMFY Chegarasi</div>
+                        <div id="geojsonStatus" class="auto-load-status loading">
+                            <span class="loading-spinner"></span>Yuklanmoqda...
+                        </div>
+                        <div class="btn-group" style="margin-top: 8px;">
+                            <button class="btn" id="reloadGeoJsonBtn" style="background: var(--primary); color: white; font-size: 0.7rem;">
+                                <i class="fas fa-sync"></i> Qayta yuklash
+                            </button>
+                            <button class="btn" id="manualLoadBtn" style="background: #6c757d; color: white; font-size: 0.7rem;">
+                                <i class="fas fa-folder-open"></i> Boshqa fayl
+                            </button>
+                        </div>
+                        <!-- Hidden file inputs -->
+                        <input type="file" id="geojsonFile" accept=".geojson,.json" style="display: none;">
+                        <input type="file" id="autoFileInput" accept=".geojson,.json" webkitdirectory directory>
                     </div>
-                    <div class="btn-group" style="margin-top: 8px;">
-                        <button class="btn btn-success" id="exportGeoJsonBtn">
-                            <i class="fas fa-download"></i> GeoJSON Yuklash
-                        </button>
-                        <button class="btn btn-warning" id="importGeoJsonBtn">
-                            <i class="fas fa-upload"></i> GeoJSON Ochish
-                        </button>
+                    
+                    <!-- Import/Export -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-file-export"></i> Ma'lumotlar almashinuvi</div>
+                        <div class="btn-group">
+                            <button class="btn btn-success" id="importDataBtn">
+                                <i class="fas fa-file-import"></i> Yuklash
+                            </button>
+                            <button class="btn btn-primary" id="exportDataBtn">
+                                <i class="fas fa-file-export"></i> Yuklab olish
+                            </button>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.75rem; color: #666;">
+                            <p><strong>GeoJSON formatida saqlash va yuklash</strong></p>
+                            <p>Barcha maydonlar, chiziqlar va ularning xususiyatlari saqlanadi.</p>
+                        </div>
+                        <input type="file" id="importFileInput" accept=".geojson,.json" style="display: none;">
                     </div>
-                    <input type="file" id="importFile" accept=".geojson,.json" style="display: none;">
+                    
+                    <!-- Saqlanganlar -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-history"></i> Saqlangan maydonlar</div>
+                        <div class="saved-list" id="savedItems">
+                            <p style="color: #999; font-size: 0.8rem; text-align: center;">Bo'sh</p>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Tanlangan obyekt ma'lumotlari -->
-                <div class="card" id="selectedFeatureCard" style="display: none;">
-                    <div class="card-title"><i class="fas fa-info-circle"></i> Obyekt ma'lumotlari</div>
-                    <div id="featureDetails"></div>
-                    <div class="btn-group" style="margin-top: 8px;">
-                        <button class="btn" id="editFeatureBtn" style="background: var(--primary); color: white;">
-                            <i class="fas fa-edit"></i> Tahrirlash
-                        </button>
-                        <button class="btn btn-danger" id="deleteFeatureBtn">
-                            <i class="fas fa-trash"></i> O'chirish
-                        </button>
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settingsTab">
+                    <!-- Xarita turi -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-layer-group"></i> Xarita turi</div>
+                        <select class="map-type-select" id="mapTypeSelect">
+                            <option value="osm">🗺️ OpenStreetMap</option>
+                            <option value="google">🌍 Google Xarita</option>
+                            <option value="satellite">🛰️ Sputnik Tasvir</option>
+                            <option value="terrain">⛰️ Relef Xarita</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Display Settings -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-palette"></i> Ko'rinish sozlamalari</div>
+                        <div class="form-group">
+                            <label class="form-label">Maydon rangi</label>
+                            <input type="color" id="polygonColor" value="#2980b9" style="width: 100%; height: 40px;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Chiziq rangi</label>
+                            <input type="color" id="lineColor" value="#e74c3c" style="width: 100%; height: 40px;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Shaffoflik</label>
+                            <input type="range" id="opacitySlider" min="10" max="100" value="50" style="width: 100%;">
+                            <div style="font-size: 0.75rem; text-align: center; margin-top: 5px;" id="opacityValue">50%</div>
+                        </div>
+                    </div>
+                    
+                    <!-- App Info -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-info-circle"></i> Dastur haqida</div>
+                        <div style="font-size: 0.75rem; color: #666;">
+                            <p><strong>Xarita Maydon v1.1</strong></p>
+                            <p>Maydon va chiziqlarni chizish, ularning maydonini hisoblash va GeoJSON formatida saqlash.</p>
+                            <p style="margin-top: 10px;">© 2023 Xonqa MFY</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal for editing feature -->
+    <!-- Edit Modal -->
     <div class="modal-overlay" id="editModal">
         <div class="modal">
             <div class="modal-header">
-                <span class="modal-title">Obyekt ma'lumotlari</span>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <span class="modal-title">Maydonni tahrirlash</span>
+                <button class="modal-close" id="closeEditModal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">Nomi (masalan: Hovli, Dala)</label>
-                    <input type="text" id="featureName" placeholder="Obyekt nomini kiriting...">
+                    <label class="form-label">Nomi</label>
+                    <input type="text" id="editFeatureName" class="modal-input">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Turi</label>
-                    <select id="featureType">
-                        <option value="uy">Uy / Hovli</option>
-                        <option value="dala">Dala / Ekin maydoni</option>
-                        <option value="bog">Bog' / O'rmon</option>
-                        <option value="yulka">Yo'l / Yulka</option>
-                        <option value="suv">Suv obyekti</option>
+                    <select id="editFeatureType" class="modal-input">
+                        <option value="uylar">Uylar</option>
+                        <option value="dalalar">Dalalar</option>
+                        <option value="yaylov">Yaylov</option>
+                        <option value="o'rmon">O'rmon</option>
+                        <option value="suv">Suv maydoni</option>
                         <option value="boshqa">Boshqa</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Egasi (F.I.Sh)</label>
-                    <input type="text" id="featureOwner" placeholder="Egasi ismini kiriting...">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Kadastr raqami</label>
-                    <input type="text" id="featureCadastre" placeholder="Kadastr raqami...">
-                </div>
-                <div class="form-group">
                     <label class="form-label">Izoh</label>
-                    <textarea id="featureDesc" placeholder="Qo'shimcha ma'lumot..."></textarea>
+                    <textarea id="editComment" class="modal-input" rows="3"></textarea>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeModal()" style="background: #6c757d; color: white;">Bekor qilish</button>
-                <button class="btn btn-success" onclick="saveFeatureData()">Saqlash</button>
+                <div class="feature-properties" id="editProperties">
+                    <!-- Properties will be loaded here -->
+                </div>
+                <div class="btn-group" style="margin-top: 15px;">
+                    <button class="btn btn-success" id="saveEditBtn">
+                        <i class="fas fa-save"></i> Saqlash
+                    </button>
+                    <button class="btn btn-danger" id="deleteEditBtn">
+                        <i class="fas fa-trash"></i> O'chirish
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -724,16 +935,31 @@
         // Global variables
         let map;
         let drawnItems = new L.FeatureGroup();
-        let selectedLayer = null;
-        let selectedLayerId = null;
+        let currentLayer = null;
         let coordinateMode = false;
         let lastClickedLatLng = null;
         let coordinateMarker = null;
-        let layerCounter = 0;
-        let layersData = new Map();
+        let boundaryLayer = null;
+        let isGeoJsonLoaded = false;
+        let editingItemId = null;
+        
+        // Default GeoJSON URL (bir xil papkada)
+        const DEFAULT_GEOJSON_URL = 'XonqaMFY.geojson';
+        const ALT_NAMES = ['xonqamfy.geojson', 'Xonqa_MFY.geojson', 'boundary.geojson', 'chegara.geojson', 'xonqa.geojson'];
+        
+        // Colors for different feature types
+        const TYPE_COLORS = {
+            'uylar': '#3498db',
+            'dalalar': '#27ae60',
+            'yaylov': '#f39c12',
+            'o\'rmon': '#2ecc71',
+            'suv': '#2980b9',
+            'boshqa': '#9b59b6'
+        };
         
         // Initialize map
         function initMap() {
+            // Center on Xonqa region (Uzbekistan)
             map = L.map('map', {
                 center: [41.45, 60.15],
                 zoom: 13,
@@ -741,63 +967,35 @@
             });
             
             // Add default OSM layer
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: 'OpenStreetMap',
+            const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap',
                 maxZoom: 19
             }).addTo(map);
             
             map.addLayer(drawnItems);
             
-            // Drawing event
+            // Drawing controls (programmatic)
             map.on(L.Draw.Event.CREATED, function (e) {
                 const layer = e.layer;
-                layerCounter++;
-                const layerId = 'feature_' + layerCounter;
-                layer.layerId = layerId;
-                
-                // Calculate measurements
-                const measurements = calculateMeasurements(layer);
-                
-                // Default properties
-                const properties = {
-                    id: layerId,
-                    name: e.layerType === 'polygon' ? 'Maydon ' + layerCounter : 'Chiziq ' + layerCounter,
-                    type: e.layerType === 'polygon' ? 'dala' : 'yulka',
-                    owner: '',
-                    cadastre: '',
-                    description: '',
-                    created: new Date().toLocaleString('uz-UZ')
-                };
-                
-                // Add measurements
-                Object.assign(properties, measurements);
-                
-                layersData.set(layerId, { layer: layer, properties: properties });
-                
-                // Add popup
-                updateLayerPopup(layer, properties);
-                
-                // Add click event
-                layer.on('click', function(evt) {
-                    L.DomEvent.stopPropagation(evt);
-                    selectFeature(layerId);
-                });
-                
                 drawnItems.addLayer(layer);
-                updateFeatureList();
-                selectFeature(layerId);
+                currentLayer = layer;
+                calculateFeature(layer);
                 
-                showNotification('Obyekt qo\'shildi! Ma\'lumotlarni kiriting.', 'success');
-                openEditModal(layerId);
+                // Set default name based on type
+                const featureType = document.getElementById('featureType').value;
+                const typeName = document.getElementById('featureType').options[document.getElementById('featureType').selectedIndex].text;
+                document.getElementById('featureName').value = `${typeName} ${new Date().getTime().toString().slice(-4)}`;
+                document.getElementById('comment').value = '';
+                
+                // Style the layer
+                styleLayer(layer, featureType);
             });
             
-            // Map click for coordinates
+            // Click for coordinates
             map.on('click', function(e) {
                 if (coordinateMode) {
                     updateCoordinates(e.latlng);
                     addCoordinateMarker(e.latlng);
-                } else {
-                    deselectAll();
                 }
             });
             
@@ -808,11 +1006,147 @@
                     document.getElementById('lngValue').textContent = e.latlng.lng.toFixed(6);
                 }
             });
+            
+            // Auto-load GeoJSON (bir necha usul bilan)
+            setTimeout(() => {
+                autoLoadGeoJson();
+            }, 500);
+            
+            // Load saved items
+            loadSavedItems();
+            
+            // Set up color pickers
+            document.getElementById('polygonColor').addEventListener('change', updateDrawingColors);
+            document.getElementById('lineColor').addEventListener('change', updateDrawingColors);
+            document.getElementById('opacitySlider').addEventListener('input', updateOpacity);
         }
         
-        // Calculate measurements
-        function calculateMeasurements(layer) {
-            const result = {};
+        // Style layer based on type
+        function styleLayer(layer, type) {
+            const color = TYPE_COLORS[type] || '#2980b9';
+            const opacity = document.getElementById('opacitySlider').value / 100;
+            
+            if (layer instanceof L.Polygon) {
+                layer.setStyle({
+                    color: color,
+                    fillColor: color,
+                    weight: 3,
+                    fillOpacity: opacity * 0.3,
+                    opacity: opacity
+                });
+            } else if (layer instanceof L.Polyline) {
+                layer.setStyle({
+                    color: color,
+                    weight: 4,
+                    opacity: opacity
+                });
+            }
+        }
+        
+        // Update drawing colors
+        function updateDrawingColors() {
+            const polygonColor = document.getElementById('polygonColor').value;
+            const lineColor = document.getElementById('lineColor').value;
+            
+            // Update current layer if exists
+            if (currentLayer) {
+                styleLayer(currentLayer, document.getElementById('featureType').value);
+            }
+        }
+        
+        // Update opacity
+        function updateOpacity() {
+            const opacity = document.getElementById('opacitySlider').value;
+            document.getElementById('opacityValue').textContent = `${opacity}%`;
+            
+            // Update current layer if exists
+            if (currentLayer) {
+                styleLayer(currentLayer, document.getElementById('featureType').value);
+            }
+        }
+        
+        // Auto-load GeoJSON - bir necha usul bilan urinib ko'radi
+        async function autoLoadGeoJson() {
+            const statusEl = document.getElementById('geojsonStatus');
+            statusEl.className = 'auto-load-status loading';
+            statusEl.innerHTML = '<span class="loading-spinner"></span>Qidirilmoqda...';
+            
+            // Usul 1: Fetch API (agar server orqali ochilsa)
+            try {
+                const response = await fetch(DEFAULT_GEOJSON_URL);
+                if (response.ok) {
+                    const geojson = await response.json();
+                    displayGeoJson(geojson);
+                    statusEl.className = 'auto-load-status success';
+                    statusEl.innerHTML = '<i class="fas fa-check-circle"></i> XonqaMFY.geojson yuklandi!';
+                    showNotification('Chegara avtomatik yuklandi!', 'success');
+                    return;
+                }
+            } catch (e) {
+                console.log('Fetch usuli ishlamadi:', e);
+            }
+            
+            // Usul 2: Alternativ nomlar bilan fetch
+            for (const name of ALT_NAMES) {
+                try {
+                    const response = await fetch(name);
+                    if (response.ok) {
+                        const geojson = await response.json();
+                        displayGeoJson(geojson);
+                        statusEl.className = 'auto-load-status success';
+                        statusEl.innerHTML = `<i class="fas fa-check-circle"></i> ${name} yuklandi!`;
+                        showNotification('Chegara yuklandi!', 'success');
+                        return;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+            
+            // Usul 3: Avtomatik fayl tanlash
+            statusEl.className = 'auto-load-status error';
+            statusEl.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i> 
+                Avtomatik topilmadi. 
+                <br><small>Iltimos, "Boshqa fayl" tugmasini bosing</small>
+            `;
+        }
+        
+        // Display GeoJSON on map
+        function displayGeoJson(geojson) {
+            if (boundaryLayer) {
+                map.removeLayer(boundaryLayer);
+            }
+            
+            boundaryLayer = L.geoJSON(geojson, {
+                style: {
+                    color: '#e74c3c',
+                    weight: 3,
+                    fillOpacity: 0.1,
+                    fillColor: '#e74c3c'
+                },
+                onEachFeature: function(feature, layer) {
+                    if (feature.properties) {
+                        let popupContent = '<b>Xonqa MFY</b><br>';
+                        for (const key in feature.properties) {
+                            popupContent += `${key}: ${feature.properties[key]}<br>`;
+                        }
+                        layer.bindPopup(popupContent);
+                    }
+                }
+            }).addTo(map);
+            
+            // Fit bounds with padding
+            const bounds = boundaryLayer.getBounds();
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+            
+            isGeoJsonLoaded = true;
+        }
+        
+        // Calculate area or length
+        function calculateFeature(layer) {
+            currentLayer = layer;
+            let html = '';
             
             if (layer instanceof L.Polygon) {
                 // Calculate area using shoelace formula
@@ -826,383 +1160,56 @@
                 }
                 area = Math.abs(area) * 0.5 * 111.32 * 111.32 * 1000;
                 
-                result.area_m2 = Math.round(area);
-                result.area_ha = (area / 10000).toFixed(2);
-                result.area_km2 = (area / 1000000).toFixed(4);
+                const areaKm2 = (area / 1000000).toFixed(3);
+                const areaHa = (area / 10000).toFixed(2);
                 
-                // Perimeter
+                // Calculate perimeter
                 let perimeter = 0;
                 for (let i = 0; i < latlngs.length; i++) {
                     const j = (i + 1) % latlngs.length;
                     perimeter += map.distance(latlngs[i], latlngs[j]);
                 }
-                result.perimeter_m = Math.round(perimeter);
                 
-            } else if (layer instanceof L.Polyline) {
+                html = `
+                    <div class="result-box">
+                        <h4>📐 Maydon natijalari</h4>
+                        <p><strong>Maydon:</strong> ${areaKm2} km²</p>
+                        <p><strong>Gektar:</strong> ${areaHa} ga</p>
+                        <p><strong>Perimeter:</strong> ${(perimeter/1000).toFixed(2)} km</p>
+                    </div>
+                `;
+                layer.featureData = { 
+                    type: 'polygon', 
+                    area: areaKm2, 
+                    hectares: areaHa,
+                    perimeter: (perimeter/1000).toFixed(2)
+                };
+            } 
+            else if (layer instanceof L.Polyline) {
                 const latlngs = layer.getLatLngs();
                 let length = 0;
                 for (let i = 0; i < latlngs.length - 1; i++) {
                     length += map.distance(latlngs[i], latlngs[i+1]);
                 }
-                result.length_m = Math.round(length);
-                result.length_km = (length / 1000).toFixed(2);
-            }
-            
-            return result;
-        }
-        
-        // Update layer popup
-        function updateLayerPopup(layer, props) {
-            let popupContent = '<div class="custom-popup">';
-            popupContent += '<div class="popup-title">' + props.name + '</div>';
-            
-            if (props.type) {
-                const typeNames = {
-                    'uy': 'Uy / Hovli',
-                    'dala': 'Dala / Ekin',
-                    'bog': "Bog' / O'rmon",
-                    'yulka': "Yo'l / Yulka",
-                    'suv': 'Suv obyekti',
-                    'boshqa': 'Boshqa'
+                
+                html = `
+                    <div class="result-box">
+                        <h4>📏 Chiziq natijalari</h4>
+                        <p><strong>Uzunlik:</strong> ${(length/1000).toFixed(2)} km</p>
+                        <p><strong>Metr:</strong> ${Math.round(length)} m</p>
+                    </div>
+                `;
+                layer.featureData = { 
+                    type: 'polyline', 
+                    length: (length/1000).toFixed(2),
+                    meters: Math.round(length)
                 };
-                popupContent += '<div class="popup-row">';
-                popupContent += '<span class="popup-label">Turi:</span>';
-                popupContent += '<span class="popup-value">' + (typeNames[props.type] || props.type) + '</span>';
-                popupContent += '</div>';
             }
             
-            if (props.area_ha) {
-                popupContent += '<div class="popup-row">';
-                popupContent += '<span class="popup-label">Maydon:</span>';
-                popupContent += '<span class="popup-value">' + props.area_ha + ' ga</span>';
-                popupContent += '</div>';
-                
-                popupContent += '<div class="popup-row">';
-                popupContent += '<span class="popup-label">Kv.m:</span>';
-                popupContent += '<span class="popup-value">' + props.area_m2.toLocaleString() + ' m2</span>';
-                popupContent += '</div>';
-            }
-            
-            if (props.length_m) {
-                popupContent += '<div class="popup-row">';
-                popupContent += '<span class="popup-label">Uzunlik:</span>';
-                popupContent += '<span class="popup-value">' + props.length_m + ' m</span>';
-                popupContent += '</div>';
-            }
-            
-            if (props.owner) {
-                popupContent += '<div class="popup-row">';
-                popupContent += '<span class="popup-label">Egasi:</span>';
-                popupContent += '<span class="popup-value">' + props.owner + '</span>';
-                popupContent += '</div>';
-            }
-            
-            if (props.cadastre) {
-                popupContent += '<div class="popup-row">';
-                popupContent += '<span class="popup-label">Kadastr:</span>';
-                popupContent += '<span class="popup-value">' + props.cadastre + '</span>';
-                popupContent += '</div>';
-            }
-            
-            if (props.description) {
-                popupContent += '<div class="popup-row" style="margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">';
-                popupContent += '<span class="popup-value" style="font-style: italic; color: #666;">' + props.description + '</span>';
-                popupContent += '</div>';
-            }
-            
-            popupContent += '</div>';
-            
-            layer.bindPopup(popupContent);
+            document.getElementById('calculationResults').innerHTML = html;
         }
         
-        // Select feature
-        function selectFeature(layerId) {
-            deselectAll();
-            
-            const data = layersData.get(layerId);
-            if (!data) return;
-            
-            selectedLayerId = layerId;
-            selectedLayer = data.layer;
-            
-            // Highlight
-            if (selectedLayer.setStyle) {
-                selectedLayer.setStyle({
-                    color: '#e74c3c',
-                    weight: 4,
-                    fillOpacity: 0.4
-                });
-            }
-            
-            // Update UI
-            updateFeatureList();
-            showFeatureDetails(data.properties);
-            
-            // Fly to feature
-            if (selectedLayer.getBounds) {
-                map.fitBounds(selectedLayer.getBounds(), { padding: [50, 50], maxZoom: 18 });
-            }
-        }
-        
-        // Deselect all
-        function deselectAll() {
-            if (selectedLayer && selectedLayer.setStyle) {
-                const isPolygon = selectedLayer instanceof L.Polygon;
-                selectedLayer.setStyle({
-                    color: isPolygon ? '#2980b9' : '#e74c3c',
-                    weight: isPolygon ? 3 : 4,
-                    fillOpacity: 0.2
-                });
-            }
-            selectedLayer = null;
-            selectedLayerId = null;
-            updateFeatureList();
-            document.getElementById('selectedFeatureCard').style.display = 'none';
-        }
-        
-        // Update feature list
-        function updateFeatureList() {
-            const container = document.getElementById('featureList');
-            
-            if (layersData.size === 0) {
-                container.innerHTML = '<p style="color: #999; font-size: 0.8rem; text-align: center;">Hozircha bo\'sh</p>';
-                return;
-            }
-            
-            let html = '';
-            layersData.forEach(function(data, id) {
-                const props = data.properties;
-                const isSelected = (id === selectedLayerId);
-                
-                let sizeInfo = '';
-                if (props.area_ha) {
-                    sizeInfo = props.area_ha + ' ga';
-                } else if (props.length_m) {
-                    sizeInfo = props.length_m + ' m';
-                }
-                
-                let ownerInfo = props.owner ? ' | ' + props.owner : '';
-                
-                html += '<div class="feature-item ' + (isSelected ? 'selected' : '') + '" onclick="selectFeature(\'' + id + '\')">';
-                html += '<div class="feature-info">';
-                html += '<div class="feature-name">' + props.name + '</div>';
-                html += '<div class="feature-meta">' + sizeInfo + ownerInfo + '</div>';
-                html += '</div>';
-                html += '<div class="feature-actions" onclick="event.stopPropagation()">';
-                html += '<button class="btn-edit" onclick="openEditModal(\'' + id + '\')" title="Tahrirlash"><i class="fas fa-edit"></i></button>';
-                html += '<button class="btn-delete" onclick="deleteFeature(\'' + id + '\')" title="O\'chirish"><i class="fas fa-trash"></i></button>';
-                html += '</div>';
-                html += '</div>';
-            });
-            
-            container.innerHTML = html;
-        }
-        
-        // Show feature details
-        function showFeatureDetails(props) {
-            const card = document.getElementById('selectedFeatureCard');
-            const details = document.getElementById('featureDetails');
-            
-            let html = '<div class="result-box">';
-            
-            if (props.area_ha) {
-                html += '<div class="result-item">';
-                html += '<span class="result-label">Maydon:</span>';
-                html += '<span class="result-value">' + props.area_ha + ' ga</span>';
-                html += '</div>';
-                
-                html += '<div class="result-item">';
-                html += '<span class="result-label">Kv.metr:</span>';
-                html += '<span class="result-value">' + props.area_m2.toLocaleString() + ' m2</span>';
-                html += '</div>';
-                
-                html += '<div class="result-item">';
-                html += '<span class="result-label">Perimeter:</span>';
-                html += '<span class="result-value">' + props.perimeter_m + ' m</span>';
-                html += '</div>';
-            }
-            
-            if (props.length_m) {
-                html += '<div class="result-item">';
-                html += '<span class="result-label">Uzunlik:</span>';
-                html += '<span class="result-value">' + props.length_m + ' m</span>';
-                html += '</div>';
-                
-                html += '<div class="result-item">';
-                html += '<span class="result-label">Kilometr:</span>';
-                html += '<span class="result-value">' + props.length_km + ' km</span>';
-                html += '</div>';
-            }
-            
-            html += '</div>';
-            details.innerHTML = html;
-            card.style.display = 'block';
-        }
-        
-        // Open edit modal
-        function openEditModal(layerId) {
-            const data = layersData.get(layerId);
-            if (!data) return;
-            
-            selectedLayerId = layerId;
-            const props = data.properties;
-            
-            document.getElementById('featureName').value = props.name || '';
-            document.getElementById('featureType').value = props.type || 'dala';
-            document.getElementById('featureOwner').value = props.owner || '';
-            document.getElementById('featureCadastre').value = props.cadastre || '';
-            document.getElementById('featureDesc').value = props.description || '';
-            
-            document.getElementById('editModal').classList.add('show');
-        }
-        
-        // Close modal
-        function closeModal() {
-            document.getElementById('editModal').classList.remove('show');
-        }
-        
-        // Save feature data
-        function saveFeatureData() {
-            if (!selectedLayerId) return;
-            
-            const data = layersData.get(selectedLayerId);
-            if (!data) return;
-            
-            data.properties.name = document.getElementById('featureName').value || data.properties.name;
-            data.properties.type = document.getElementById('featureType').value;
-            data.properties.owner = document.getElementById('featureOwner').value;
-            data.properties.cadastre = document.getElementById('featureCadastre').value;
-            data.properties.description = document.getElementById('featureDesc').value;
-            
-            updateLayerPopup(data.layer, data.properties);
-            updateFeatureList();
-            
-            if (selectedLayerId) {
-                showFeatureDetails(data.properties);
-            }
-            
-            closeModal();
-            showNotification('Ma\'lumotlar saqlandi!', 'success');
-        }
-        
-        // Delete feature
-        function deleteFeature(layerId) {
-            if (!confirm('Haqiqatan ham o\'chirmoqchimisiz?')) return;
-            
-            const data = layersData.get(layerId);
-            if (data) {
-                drawnItems.removeLayer(data.layer);
-                layersData.delete(layerId);
-                
-                if (selectedLayerId === layerId) {
-                    deselectAll();
-                }
-                
-                updateFeatureList();
-                showNotification('O\'chirildi!', 'success');
-            }
-        }
-        
-        // Export GeoJSON
-        function exportGeoJson() {
-            if (layersData.size === 0) {
-                showNotification('Eksport qilish uchun obyekt yo\'q!', 'error');
-                return;
-            }
-            
-            const features = [];
-            layersData.forEach(function(data, id) {
-                const geojson = data.layer.toGeoJSON();
-                geojson.properties = {};
-                for (var key in data.properties) {
-                    geojson.properties[key] = data.properties[key];
-                }
-                features.push(geojson);
-            });
-            
-            const featureCollection = {
-                type: 'FeatureCollection',
-                features: features,
-                created: new Date().toISOString(),
-                count: features.length
-            };
-            
-            const dataStr = JSON.stringify(featureCollection, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(dataBlob);
-            link.download = 'xonqa_mfy_' + new Date().toISOString().slice(0, 10) + '.geojson';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showNotification('GeoJSON yuklandi!', 'success');
-        }
-        
-        // Import GeoJSON
-        function importGeoJson(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const geojson = JSON.parse(e.target.result);
-                    
-                    if (geojson.type === 'FeatureCollection' && geojson.features) {
-                        geojson.features.forEach(function(feature) {
-                            const layer = L.geoJSON(feature).getLayers()[0];
-                            layerCounter++;
-                            const layerId = 'imported_' + layerCounter;
-                            layer.layerId = layerId;
-                            
-                            const measurements = calculateMeasurements(layer);
-                            const properties = {
-                                id: layerId,
-                                name: (feature.properties && feature.properties.name) ? feature.properties.name : 'Obyekt ' + layerCounter,
-                                type: (feature.properties && feature.properties.type) ? feature.properties.type : 'boshqa',
-                                owner: (feature.properties && feature.properties.owner) ? feature.properties.owner : '',
-                                cadastre: (feature.properties && feature.properties.cadastre) ? feature.properties.cadastre : '',
-                                description: (feature.properties && feature.properties.description) ? feature.properties.description : '',
-                                created: new Date().toLocaleString('uz-UZ')
-                            };
-                            
-                            for (var key in measurements) {
-                                properties[key] = measurements[key];
-                            }
-                            
-                            layersData.set(layerId, { layer: layer, properties: properties });
-                            
-                            const isPolygon = layer instanceof L.Polygon;
-                            layer.setStyle({
-                                color: isPolygon ? '#2980b9' : '#e74c3c',
-                                weight: isPolygon ? 3 : 4,
-                                fillOpacity: 0.2
-                            });
-                            
-                            updateLayerPopup(layer, properties);
-                            
-                            layer.on('click', function(evt) {
-                                L.DomEvent.stopPropagation(evt);
-                                selectFeature(layerId);
-                            });
-                            
-                            drawnItems.addLayer(layer);
-                        });
-                        
-                        updateFeatureList();
-                        showNotification(geojson.features.length + ' ta obyekt yuklandi!', 'success');
-                    }
-                } catch (err) {
-                    showNotification('Xatolik! Noto\'g\'ri GeoJSON format', 'error');
-                    console.error(err);
-                }
-            };
-            reader.readAsText(file);
-        }
-        
-        // Update coordinates display
+        // Update coordinate display
         function updateCoordinates(latlng) {
             lastClickedLatLng = latlng;
             document.getElementById('latValue').textContent = latlng.lat.toFixed(6);
@@ -1215,8 +1222,19 @@
                 map.removeLayer(coordinateMarker);
             }
             
-            coordinateMarker = L.marker(latlng).addTo(map);
-            coordinateMarker.bindPopup('<b>Koordinata:</b><br>' + latlng.lat.toFixed(6) + ', ' + latlng.lng.toFixed(6)).openPopup();
+            coordinateMarker = L.marker(latlng, {
+                icon: L.divIcon({
+                    className: 'pulse-marker',
+                    html: '<div style="background: #e74c3c; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
+                })
+            }).addTo(map);
+            
+            coordinateMarker.bindPopup(`
+                <b>Koordinata:</b><br>
+                ${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}
+            `).openPopup();
         }
         
         // Copy coordinates
@@ -1226,33 +1244,561 @@
                 return;
             }
             
-            const text = lastClickedLatLng.lat.toFixed(6) + ', ' + lastClickedLatLng.lng.toFixed(6);
-            navigator.clipboard.writeText(text).then(function() {
+            const text = `${lastClickedLatLng.lat.toFixed(6)}, ${lastClickedLatLng.lng.toFixed(6)}`;
+            navigator.clipboard.writeText(text).then(() => {
                 showNotification('Koordinata nusxalandi!', 'success');
             });
         }
         
+        // Save feature
+        function saveFeature() {
+            const layers = drawnItems.getLayers();
+            if (layers.length === 0 || !currentLayer || !currentLayer.featureData) {
+                showNotification('Avval maydon yoki chiziq chizing!', 'warning');
+                return;
+            }
+            
+            const layer = currentLayer;
+            const name = document.getElementById('featureName').value || `Maydon ${Date.now().toString().slice(-4)}`;
+            const type = document.getElementById('featureType').value;
+            const comment = document.getElementById('comment').value || 'Izohsiz';
+            
+            const data = {
+                id: Date.now(),
+                name: name,
+                type: type,
+                ...layer.featureData,
+                comment: comment,
+                date: new Date().toLocaleString('uz-UZ'),
+                coordinates: layer.getLatLngs(),
+                color: TYPE_COLORS[type] || '#2980b9',
+                style: layer.options
+            };
+            
+            // Add to layer for reference
+            layer.featureData.id = data.id;
+            layer.featureData.name = name;
+            
+            let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            saved.push(data);
+            localStorage.setItem('mapFeatures', JSON.stringify(saved));
+            
+            loadSavedItems();
+            document.getElementById('featureName').value = '';
+            document.getElementById('comment').value = '';
+            showNotification('Maydon saqlandi!', 'success');
+        }
+        
+        // Update feature
+        function updateFeature() {
+            if (!currentLayer || !currentLayer.featureData || !currentLayer.featureData.id) {
+                showNotification('Avval maydonni tanlang yoki chizing!', 'warning');
+                return;
+            }
+            
+            const id = currentLayer.featureData.id;
+            const name = document.getElementById('featureName').value || `Maydon ${id.toString().slice(-4)}`;
+            const type = document.getElementById('featureType').value;
+            const comment = document.getElementById('comment').value || 'Izohsiz';
+            
+            let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            const index = saved.findIndex(item => item.id === id);
+            
+            if (index === -1) {
+                showNotification('Maydon topilmadi!', 'error');
+                return;
+            }
+            
+            saved[index] = {
+                ...saved[index],
+                name: name,
+                type: type,
+                comment: comment,
+                date: new Date().toLocaleString('uz-UZ'),
+                color: TYPE_COLORS[type] || '#2980b9'
+            };
+            
+            // Update layer feature data
+            currentLayer.featureData.name = name;
+            currentLayer.featureData.type = type;
+            
+            // Update layer style
+            styleLayer(currentLayer, type);
+            
+            localStorage.setItem('mapFeatures', JSON.stringify(saved));
+            loadSavedItems();
+            showNotification('Maydon yangilandi!', 'success');
+        }
+        
+        // Load saved items
+        function loadSavedItems() {
+            const saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            const container = document.getElementById('savedItems');
+            
+            if (saved.length === 0) {
+                container.innerHTML = '<p style="color: #999; font-size: 0.8rem; text-align: center;">Bo\'sh</p>';
+                return;
+            }
+            
+            container.innerHTML = saved.slice().reverse().map(item => `
+                <div class="saved-item" data-id="${item.id}" onclick="selectSavedItem(${item.id})">
+                    <div class="saved-item-header">
+                        <span class="saved-item-type" style="background: ${item.color || '#2980b9'}">
+                            ${item.type === 'polygon' ? '⬡ ' : '▬ '}
+                            ${item.name || 'Nomsiz'}
+                        </span>
+                        <div class="saved-item-actions">
+                            <i class="fas fa-search-plus saved-item-action zoom" onclick="zoomToFeature(${item.id}); event.stopPropagation();"></i>
+                            <i class="fas fa-edit saved-item-action edit" onclick="editSavedItem(${item.id}); event.stopPropagation();"></i>
+                            <i class="fas fa-trash saved-item-action delete" onclick="deleteSavedItem(${item.id}); event.stopPropagation();"></i>
+                        </div>
+                    </div>
+                    <div style="margin-top: 4px;">
+                        ${item.type === 'polygon' 
+                            ? `<strong>${item.area} km² (${item.hectares} ga)</strong>` 
+                            : `<strong>${item.length} km (${item.meters} m)</strong>`
+                        }
+                    </div>
+                    <div style="color: #666; font-size: 0.75rem; margin-top: 2px;">
+                        ${item.comment}
+                    </div>
+                    <div style="color: #999; font-size: 0.7rem; margin-top: 4px;">
+                        ${item.date}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Select saved item
+        function selectSavedItem(id) {
+            let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            const item = saved.find(item => item.id === id);
+            if (!item) return;
+            
+            // Find layer on map
+            const layers = drawnItems.getLayers();
+            const layer = layers.find(l => l.featureData && l.featureData.id === id);
+            
+            if (layer) {
+                currentLayer = layer;
+                layer.fire('click');
+                
+                // Update form
+                document.getElementById('featureName').value = item.name || '';
+                document.getElementById('featureType').value = item.type || 'boshqa';
+                document.getElementById('comment').value = item.comment || '';
+                
+                // Show calculation results
+                calculateFeature(layer);
+            }
+        }
+        
+        // Zoom to feature
+        function zoomToFeature(id) {
+            let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            const item = saved.find(item => item.id === id);
+            if (!item) return;
+            
+            // Find layer on map
+            const layers = drawnItems.getLayers();
+            const layer = layers.find(l => l.featureData && l.featureData.id === id);
+            
+            if (layer) {
+                map.fitBounds(layer.getBounds());
+                layer.fire('click');
+            }
+        }
+        
+        // Edit saved item
+        function editSavedItem(id) {
+            editingItemId = id;
+            let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            const item = saved.find(item => item.id === id);
+            if (!item) return;
+            
+            // Fill modal
+            document.getElementById('editFeatureName').value = item.name || '';
+            document.getElementById('editFeatureType').value = item.type || 'boshqa';
+            document.getElementById('editComment').value = item.comment || '';
+            
+            // Add properties
+            let propertiesHtml = '<div class="card-title"><i class="fas fa-info-circle"></i> Xususiyatlar</div>';
+            if (item.type === 'polygon') {
+                propertiesHtml += `
+                    <div class="prop-row">
+                        <span class="prop-label">Maydon:</span>
+                        <span class="prop-value">${item.area} km²</span>
+                    </div>
+                    <div class="prop-row">
+                        <span class="prop-label">Gektar:</span>
+                        <span class="prop-value">${item.hectares} ga</span>
+                    </div>
+                    <div class="prop-row">
+                        <span class="prop-label">Perimeter:</span>
+                        <span class="prop-value">${item.perimeter} km</span>
+                    </div>
+                `;
+            } else {
+                propertiesHtml += `
+                    <div class="prop-row">
+                        <span class="prop-label">Uzunlik:</span>
+                        <span class="prop-value">${item.length} km</span>
+                    </div>
+                    <div class="prop-row">
+                        <span class="prop-label">Metr:</span>
+                        <span class="prop-value">${item.meters} m</span>
+                    </div>
+                `;
+            }
+            
+            propertiesHtml += `
+                <div class="prop-row">
+                    <span class="prop-label">Yaratilgan:</span>
+                    <span class="prop-value">${item.date}</span>
+                </div>
+            `;
+            
+            document.getElementById('editProperties').innerHTML = propertiesHtml;
+            
+            // Show modal
+            document.getElementById('editModal').classList.add('active');
+        }
+        
+        // Save edit
+        function saveEdit() {
+            if (!editingItemId) return;
+            
+            const name = document.getElementById('editFeatureName').value;
+            const type = document.getElementById('editFeatureType').value;
+            const comment = document.getElementById('editComment').value;
+            
+            let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            const index = saved.findIndex(item => item.id === editingItemId);
+            
+            if (index === -1) {
+                showNotification('Maydon topilmadi!', 'error');
+                return;
+            }
+            
+            saved[index] = {
+                ...saved[index],
+                name: name,
+                type: type,
+                comment: comment,
+                date: new Date().toLocaleString('uz-UZ'),
+                color: TYPE_COLORS[type] || '#2980b9'
+            };
+            
+            // Update layer on map if exists
+            const layers = drawnItems.getLayers();
+            const layer = layers.find(l => l.featureData && l.featureData.id === editingItemId);
+            if (layer) {
+                layer.featureData.name = name;
+                layer.featureData.type = type;
+                styleLayer(layer, type);
+            }
+            
+            localStorage.setItem('mapFeatures', JSON.stringify(saved));
+            loadSavedItems();
+            closeEditModal();
+            showNotification('Maydon yangilandi!', 'success');
+        }
+        
+        // Delete from edit modal
+        function deleteFromEditModal() {
+            if (!editingItemId) return;
+            
+            if (!confirm('Maydonni o\'chirishni istaysizmi?')) return;
+            
+            deleteSavedItem(editingItemId);
+            closeEditModal();
+        }
+        
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            editingItemId = null;
+        }
+        
+        // Delete saved item
+        function deleteSavedItem(id) {
+            if (!confirm('Maydonni o\'chirishni istaysizmi?')) return;
+            
+            let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            saved = saved.filter(item => item.id !== id);
+            localStorage.setItem('mapFeatures', JSON.stringify(saved));
+            
+            // Remove from map if exists
+            const layers = drawnItems.getLayers();
+            const layer = layers.find(l => l.featureData && l.featureData.id === id);
+            if (layer) {
+                drawnItems.removeLayer(layer);
+            }
+            
+            loadSavedItems();
+            showNotification('Maydon o\'chirildi!', 'success');
+        }
+        
+        // Clear all
+        function clearAll() {
+            if (!confirm('Barchasini o\'chirishni istaysizmi?')) return;
+            drawnItems.clearLayers();
+            if (coordinateMarker) map.removeLayer(coordinateMarker);
+            document.getElementById('calculationResults').innerHTML = 'Maydon yoki chiziq chizing...';
+            document.getElementById('featureName').value = '';
+            document.getElementById('comment').value = '';
+            currentLayer = null;
+            showNotification('Tozalandi!', 'success');
+        }
+        
         // Change map type
         function changeMapType(type) {
-            map.eachLayer(function(layer) {
+            map.eachLayer(layer => {
                 if (layer._url) map.removeLayer(layer);
             });
             
-            let url;
-            if (type === 'google') {
-                url = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
-            } else if (type === 'satellite') {
-                url = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
-            } else {
-                url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            let url, attribution;
+            switch(type) {
+                case 'google':
+                    url = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
+                    attribution = '© Google';
+                    break;
+                case 'satellite':
+                    url = 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
+                    attribution = '© Google';
+                    break;
+                case 'terrain':
+                    url = 'https://mt1.google.com/vt/lyrs=p&x={x}&y={y}&z={z}';
+                    attribution = '© Google';
+                    break;
+                default:
+                    url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+                    attribution = '© OpenStreetMap';
             }
             
             L.tileLayer(url, {
                 maxZoom: 20,
-                attribution: type === 'osm' ? 'OpenStreetMap' : 'Google'
+                attribution: attribution
             }).addTo(map);
             
             map.addLayer(drawnItems);
+            if (boundaryLayer) map.addLayer(boundaryLayer);
+        }
+        
+        // Handle manual file upload
+        function handleManualFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const geojson = JSON.parse(event.target.result);
+                    displayGeoJson(geojson);
+                    
+                    const statusEl = document.getElementById('geojsonStatus');
+                    statusEl.className = 'auto-load-status success';
+                    statusEl.innerHTML = `<i class="fas fa-check-circle"></i> ${file.name} yuklandi!`;
+                    
+                    showNotification('Fayl yuklandi!', 'success');
+                } catch (err) {
+                    showNotification('Xatolik! Noto\'g\'ri format', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Handle auto file input (directory picker)
+        function handleAutoFile(e) {
+            const files = e.target.files;
+            if (!files.length) return;
+            
+            // Find XonqaMFY.geojson in the selected files
+            for (let file of files) {
+                if (file.name.toLowerCase().includes('xonqa') && file.name.endsWith('.geojson')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            const geojson = JSON.parse(event.target.result);
+                            displayGeoJson(geojson);
+                            
+                            const statusEl = document.getElementById('geojsonStatus');
+                            statusEl.className = 'auto-load-status success';
+                            statusEl.innerHTML = `<i class="fas fa-check-circle"></i> ${file.name} avtomatik yuklandi!`;
+                            
+                            showNotification('Chegara avtomatik yuklandi!', 'success');
+                        } catch (err) {
+                            console.error('GeoJSON parse error:', err);
+                        }
+                    };
+                    reader.readAsText(file);
+                    return;
+                }
+            }
+        }
+        
+        // Export all data to GeoJSON
+        function exportAllData() {
+            const saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+            if (saved.length === 0) {
+                showNotification('Eksport qilish uchun maydon yo\'q!', 'warning');
+                return;
+            }
+            
+            // Convert saved items to GeoJSON FeatureCollection
+            const features = saved.map(item => {
+                let geometry;
+                
+                if (item.type === 'polygon') {
+                    // Convert coordinates to GeoJSON format
+                    const coords = item.coordinates[0].map(latlng => [latlng.lng, latlng.lat]);
+                    // Close the polygon
+                    coords.push(coords[0]);
+                    geometry = {
+                        type: "Polygon",
+                        coordinates: [coords]
+                    };
+                } else {
+                    // Polyline
+                    const coords = item.coordinates.map(latlng => [latlng.lng, latlng.lat]);
+                    geometry = {
+                        type: "LineString",
+                        coordinates: coords
+                    };
+                }
+                
+                return {
+                    type: "Feature",
+                    geometry: geometry,
+                    properties: {
+                        id: item.id,
+                        name: item.name,
+                        type: item.type,
+                        comment: item.comment,
+                        date: item.date,
+                        color: item.color,
+                        area: item.area,
+                        hectares: item.hectares,
+                        perimeter: item.perimeter,
+                        length: item.length,
+                        meters: item.meters
+                    }
+                };
+            });
+            
+            const geoJson = {
+                type: "FeatureCollection",
+                features: features
+            };
+            
+            // Create download link
+            const dataStr = JSON.stringify(geoJson, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `XonqaMFY_Maydonlar_${new Date().toISOString().slice(0,10)}.geojson`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Barcha maydonlar GeoJSON formatida yuklab olindi!', 'success');
+        }
+        
+        // Import data from GeoJSON
+        function importData() {
+            document.getElementById('importFileInput').click();
+        }
+        
+        // Handle imported GeoJSON file
+        function handleImportedFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const geoJson = JSON.parse(event.target.result);
+                    
+                    if (geoJson.type !== 'FeatureCollection') {
+                        showNotification('Noto\'g\'ri GeoJSON format!', 'error');
+                        return;
+                    }
+                    
+                    // Clear existing data
+                    drawnItems.clearLayers();
+                    localStorage.removeItem('mapFeatures');
+                    
+                    let importedCount = 0;
+                    
+                    // Process each feature
+                    geoJson.features.forEach(feature => {
+                        if (!feature.geometry) return;
+                        
+                        let layer;
+                        const properties = feature.properties || {};
+                        
+                        if (feature.geometry.type === 'Polygon') {
+                            // Convert coordinates to Leaflet format
+                            const latlngs = feature.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
+                            layer = L.polygon(latlngs);
+                        } else if (feature.geometry.type === 'LineString') {
+                            const latlngs = feature.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                            layer = L.polyline(latlngs);
+                        } else {
+                            return; // Skip other geometry types
+                        }
+                        
+                        // Add to map
+                        drawnItems.addLayer(layer);
+                        
+                        // Calculate feature data
+                        calculateFeature(layer);
+                        
+                        // Save to localStorage
+                        const data = {
+                            id: properties.id || Date.now() + Math.random(),
+                            name: properties.name || `Maydon ${importedCount + 1}`,
+                            type: properties.type || 'boshqa',
+                            comment: properties.comment || '',
+                            date: properties.date || new Date().toLocaleString('uz-UZ'),
+                            coordinates: layer.getLatLngs(),
+                            color: properties.color || TYPE_COLORS[properties.type] || '#2980b9',
+                            area: properties.area,
+                            hectares: properties.hectares,
+                            perimeter: properties.perimeter,
+                            length: properties.length,
+                            meters: properties.meters
+                        };
+                        
+                        // Update layer feature data
+                        layer.featureData = {
+                            id: data.id,
+                            type: data.type === 'polygon' ? 'polygon' : 'polyline',
+                            name: data.name
+                        };
+                        
+                        // Style the layer
+                        styleLayer(layer, data.type);
+                        
+                        let saved = JSON.parse(localStorage.getItem('mapFeatures') || '[]');
+                        saved.push(data);
+                        localStorage.setItem('mapFeatures', JSON.stringify(saved));
+                        
+                        importedCount++;
+                    });
+                    
+                    loadSavedItems();
+                    showNotification(`${importedCount} ta maydon yuklandi!`, 'success');
+                    
+                    // Reset file input
+                    e.target.value = '';
+                } catch (err) {
+                    console.error('Import error:', err);
+                    showNotification('Faylni o\'qishda xatolik!', 'error');
+                }
+            };
+            reader.readAsText(file);
         }
         
         // Toggle coordinate mode
@@ -1273,30 +1819,39 @@
             }
         }
         
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `${tabName}Tab`) {
+                    content.classList.add('active');
+                }
+            });
+        }
+        
         // Show notification
-        function showNotification(text, type) {
+        function showNotification(text, type = 'success') {
             const notif = document.getElementById('notification');
-            let icon = 'check-circle';
-            let color = '#27ae60';
+            const icon = type === 'success' ? 'check-circle' : 
+                        type === 'error' ? 'exclamation-circle' : 
+                        type === 'warning' ? 'exclamation-triangle' : 'info-circle';
             
-            if (type === 'error') {
-                icon = 'exclamation-circle';
-                color = '#e74c3c';
-            } else if (type === 'warning') {
-                icon = 'exclamation-triangle';
-                color = '#f39c12';
-            } else if (type === 'info') {
-                icon = 'info-circle';
-                color = '#3498db';
-            }
-            
-            notif.innerHTML = '<i class="fas fa-' + icon + '"></i> <span>' + text + '</span>';
-            notif.style.background = color;
+            notif.innerHTML = `<i class="fas fa-${icon}"></i> <span>${text}</span>`;
+            notif.style.background = type === 'success' ? '#27ae60' : 
+                                    type === 'error' ? '#e74c3c' : 
+                                    type === 'warning' ? '#f39c12' : '#3498db';
             
             notif.classList.add('show');
-            setTimeout(function() {
-                notif.classList.remove('show');
-            }, 3000);
+            setTimeout(() => notif.classList.remove('show'), 2500);
         }
         
         // Sidebar toggle
@@ -1309,42 +1864,78 @@
             initMap();
             
             // Drawing buttons
-            document.getElementById('drawPolygonBtn').addEventListener('click', function() {
+            document.getElementById('drawPolygonBtn').addEventListener('click', () => {
                 new L.Draw.Polygon(map, {
                     allowIntersection: false,
-                    shapeOptions: { color: '#2980b9', weight: 3, fillOpacity: 0.2 }
+                    shapeOptions: { 
+                        color: document.getElementById('polygonColor').value,
+                        weight: 3
+                    }
                 }).enable();
             });
             
-            document.getElementById('drawLineBtn').addEventListener('click', function() {
+            document.getElementById('drawLineBtn').addEventListener('click', () => {
                 new L.Draw.Polyline(map, {
-                    shapeOptions: { color: '#e74c3c', weight: 4 }
+                    shapeOptions: { 
+                        color: document.getElementById('lineColor').value,
+                        weight: 4 
+                    }
                 }).enable();
             });
             
             document.getElementById('getCoordinateBtn').addEventListener('click', toggleCoordinateMode);
             document.getElementById('copyCoordinatesBtn').addEventListener('click', copyCoordinates);
-            document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
-            document.getElementById('closeSidebar').addEventListener('click', toggleSidebar);
-            document.getElementById('editFeatureBtn').addEventListener('click', function() {
-                if (selectedLayerId) openEditModal(selectedLayerId);
+            document.getElementById('saveFeatureBtn').addEventListener('click', saveFeature);
+            document.getElementById('updateFeatureBtn').addEventListener('click', updateFeature);
+            document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+            document.getElementById('mapTypeSelect').addEventListener('change', (e) => changeMapType(e.target.value));
+            
+            // Export/Import buttons
+            document.getElementById('exportAllBtn').addEventListener('click', exportAllData);
+            document.getElementById('exportDataBtn').addEventListener('click', exportAllData);
+            document.getElementById('importDataBtn').addEventListener('click', importData);
+            document.getElementById('importFileInput').addEventListener('change', handleImportedFile);
+            
+            // GeoJSON controls
+            document.getElementById('reloadGeoJsonBtn').addEventListener('click', autoLoadGeoJson);
+            document.getElementById('manualLoadBtn').addEventListener('click', () => {
+                document.getElementById('geojsonFile').click();
             });
-            document.getElementById('deleteFeatureBtn').addEventListener('click', function() {
-                if (selectedLayerId) deleteFeature(selectedLayerId);
-            });
-            document.getElementById('exportGeoJsonBtn').addEventListener('click', exportGeoJson);
-            document.getElementById('importGeoJsonBtn').addEventListener('click', function() {
-                document.getElementById('importFile').click();
-            });
-            document.getElementById('importFile').addEventListener('change', importGeoJson);
-            document.getElementById('mapTypeSelect').addEventListener('change', function(e) {
-                changeMapType(e.target.value);
+            document.getElementById('geojsonFile').addEventListener('change', handleManualFile);
+            document.getElementById('autoFileInput').addEventListener('change', handleAutoFile);
+            
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchTab(tab.dataset.tab);
+                });
             });
             
-            // Close modal on outside click
-            document.getElementById('editModal').addEventListener('click', function(e) {
-                if (e.target.id === 'editModal') closeModal();
+            // Sidebar controls
+            document.getElementById('toggleSidebar').addEventListener('click', toggleSidebar);
+            document.getElementById('closeSidebar').addEventListener('click', toggleSidebar);
+            
+            // Modal controls
+            document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
+            document.getElementById('saveEditBtn').addEventListener('click', saveEdit);
+            document.getElementById('deleteEditBtn').addEventListener('click', deleteFromEditModal);
+            
+            // Close sidebar on mobile when clicking outside
+            document.getElementById('map').addEventListener('click', () => {
+                if (window.innerWidth <= 768 && !document.getElementById('sidebar').classList.contains('hidden')) {
+                    toggleSidebar();
+                }
             });
+            
+            // Close modal on overlay click
+            document.getElementById('editModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('editModal')) {
+                    closeEditModal();
+                }
+            });
+            
+            // Initialize opacity display
+            updateOpacity();
         });
     </script>
 </body>
